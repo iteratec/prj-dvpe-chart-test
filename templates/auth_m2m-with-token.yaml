@@ -1,0 +1,41 @@
+{{- define "auth_m2m-with-token" -}}
+  {{- $values := index . 0 -}}
+  {{- $ := index . 1 -}}
+apiVersion: enterprise.gloo.solo.io/v1
+kind: AuthConfig
+metadata:
+  name: {{ $values.authconfigname }}
+  namespace: {{ $.Release.Namespace }}                       # your kubernetes namespace
+spec:
+  configs:
+    - passThroughAuth:
+        grpc:
+          address: auth-passthrough-token-validation.gloo-system.svc.cluster.local:9001
+        config:
+            {{- /* TODO: Get URL*/}}
+          openIdConfigurationUrl: {{ include "getOpenIDUrl" (list $values $.Values.defaults.realms.default $) }}
+
+    - passThroughAuth:  # this generates the machine-to-machine token
+        grpc:
+          address: auth-passthrough-client-credentials.gloo-system.svc.cluster.local:9001
+        config:
+          openIdConfigurationUrl: {{ $values.openidurl }}
+          mode: GatherCredentials                            # instruct the client-credentials plugin to act in gathering credentials mode
+          clientId: 7fe887fd-9e58-4999-bdc0-c13b2c84bae2     # the client ID (registered with Web.EAM) to act as
+          clientSecretRef:
+            Name: client-credentials-via-token-validation-m2m-secret
+            Namespace: wadtfy-samples
+                  
+  {{- if $values.headerextension }}
+    - passThroughAuth:
+        grpc:
+          address: auth-passthrough-token-validation.gloo-system.svc.cluster.local:9001
+        config:
+          openIdConfigurationUrl: {{ $values.openidurl }}
+          enableAccessTokenForwarding: {{ $.Values.defaults.passthru.enableAccessTokenForwarding }}
+          enableSubjectForwarding: {{ $.Values.defaults.passthru.enableSubjectForwarding }}
+          enableQAccountMatching: {{ $.Values.defaults.passthru.enableQAccountMatching }}
+  {{- end }}
+{{- end -}}
+
+

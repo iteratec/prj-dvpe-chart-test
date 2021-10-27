@@ -1,0 +1,62 @@
+{{- define "auth_ui-with-strongauth" -}}
+  {{- $values := index . 0 -}}
+  {{- $ := index . 1 -}}
+apiVersion: enterprise.gloo.solo.io/v1
+kind: AuthConfig
+metadata:
+  name: {{ $values.authconfigname }}
+  namespace: {{ $.Release.Namespace }}                       # your kubernetes namespace
+spec:
+  configs:
+    - passThroughAuth:
+        grpc:
+            {{- /* TODO: Get URL */}}
+          address: auth-passthrough-token-validation.gloo-system.svc.cluster.local:9001
+        config:
+            {{- /* TODO: Get URL*/}}
+          openIdConfigurationUrl: {{ $values.openidurl }}
+            {{- /* TODO: Configurable Level */}}
+          strongAuthenticationLevel: 4000                   # has to correspond to "acr_values" set in oauth2 element below
+
+    - oauth2:
+      oidcAuthorizationCode:
+  {{- /* Question/Frage: ist das nicht bei Header Extension nur wichtig ?*/}}
+  {{- /* {{- if eq true $values.headerextension }}
+        authEndpointQueryParams:
+          # TODO: Configurable Level
+          acr_values : strongAuth4000Service              # set strong authentication level
+  {{- end }}
+  */}}
+        authEndpointQueryParams:
+          acr_values : strongAuth4000Service              # set strong authentication level
+        {{- /* TODO: Fix app_url */}}
+        app_url: {{ $values.appurl }}   # your UIs URL
+        callback_path: {{ $values.callbackpath }}  # your Oauth2 callback registered with Web.EAM
+        client_id: {{ required "clientId for ui/oauth2 flow required" $values.clientid }}   # 
+        client_secret_ref:
+            {{- /* TODO: handover client secret ref */}}
+          name: wadtfy-sample-ui-oidc-secrets             # see wadtfy-samples/wadtfy-sample-ui/templates/external-secret.yaml
+          namespace: {{ $.Release.Namespace }}
+        issuer_url: {{ $.Values.defaults.issuerUrl }}
+        session:
+          cookieOptions:
+            domain: {{ first $.Values.defaults.domains }}
+            maxAge: 7200
+          redis:
+            cookieName: auth0-session
+            options:
+              host: {{ $.Values.defaults.redisUrl }}
+
+  {{- if $values.headerextension }}
+    - passThroughAuth:
+        grpc:
+          address: auth-passthrough-token-validation.gloo-system.svc.cluster.local:9001
+        config:
+            {{- /* TODO: Get URL */}}
+          openIdConfigurationUrl: {{ $values.openidurl }}
+          enableAccessTokenForwarding: {{ $.Values.defaults.passthru.enableAccessTokenForwarding }}
+          enableSubjectForwarding: {{ $.Values.defaults.passthru.enableSubjectForwarding }}
+          enableQAccountMatching: {{ $.Values.defaults.passthru.enableQAccountMatching }}
+  {{- end }}
+
+{{- end -}}

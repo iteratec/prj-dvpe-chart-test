@@ -1,0 +1,40 @@
+{{- define "auth_ui" -}}
+  {{- $values := index . 0 -}}
+  {{- $ := index . 1 -}}
+apiVersion: enterprise.gloo.solo.io/v1
+kind: AuthConfig
+metadata:
+  name: {{ $values.authconfigname }}
+  namespace: {{ $.Release.Namespace }}                       # your kubernetes namespace
+spec:
+  configs:
+    - oauth2:
+      oidcAuthorizationCode:
+        app_url: {{ $values.appurl }}   # your UIs URL
+        callback_path: {{ required "callbackPath for ui/oauth2 flow required" $values.callbackpath }}  # your Oauth2 callback registered with Web.EAM
+        client_id: {{ required "clientId for ui/oauth2 flow required" $values.clientid }}   # 
+        client_secret_ref:
+            {{- /* TODO: handover client secret ref */}}
+          name: wadtfy-sample-ui-oidc-secrets             # see wadtfy-samples/wadtfy-sample-ui/templates/external-secret.yaml
+          namespace: {{ $.Release.Namespace }}
+        issuer_url: {{ $.Values.defaults.issuerUrl }}
+        session:
+          cookieOptions:
+            domain: {{ first $.Values.defaults.domains }}
+            maxAge: 7200
+          redis:
+            cookieName: auth0-session
+            options:
+              host: {{ $.Values.defaults.redisUrl }}
+
+  {{- if $values.headerextension }}
+    - passThroughAuth:
+        grpc:
+          address: auth-passthrough-token-validation.gloo-system.svc.cluster.local:9001
+        config:
+          openIdConfigurationUrl: {{ $values.openidurl }}
+          enableAccessTokenForwarding: {{ $.Values.defaults.passthru.enableAccessTokenForwarding }}
+          enableSubjectForwarding: {{ $.Values.defaults.passthru.enableSubjectForwarding }}
+          enableQAccountMatching: {{ $.Values.defaults.passthru.enableQAccountMatching }}
+  {{- end }}
+{{- end -}}
