@@ -4,7 +4,6 @@
   {{- $_ := set $values "internet" $val.internet -}}
   {{- $_ := set $values "cors" $val.cors -}}
   {{- $_ := set $values "headermanipulation" $val.headerManipulation -}}
-  {{- $_ := set $values "upstreamname" (printf "%s-%s-svc-%v" $.Release.Namespace $values.svc $.Values.defaults.service.port) -}}
   {{- $_ := set $values "virtualservicename" (include "getVirtualServiceName" (list $values.svc $key)) -}}
   {{- $_ := set $values "servicedomain" (include "getSvcDomain" (list $values $) ) -}}
   {{ printf "\n---" }}
@@ -29,7 +28,6 @@ spec:
   virtualHost:
     domains:
       - {{ $values.servicedomain }}
-      {{- /* TODO: should it be always included, or only for UI services ? */}}
     options:
       {{- if $values.headermanipulation }}
       headerManipulation:
@@ -40,7 +38,8 @@ spec:
             value: {{ $v.header.value }}
         {{ end -}}
       {{- end -}}
-      {{- if $values.cors }} {{/* TODO: Backend only */}}
+      {{- /* TODO: Backend only */}}
+      {{- if $values.cors }} 
       cors:
         allowCredentials: {{ default $.Values.defaults.cors.allowCredentials $values.cors.allowCredentials }}
         {{ if $values.cors.allowHeaders -}}
@@ -83,17 +82,29 @@ spec:
         {{- $_ := set $values "clientid" .clientId  -}}
         {{- $_ := set $values "callbackPath" .callbackPath -}}
         {{- $_ := set $values "headerextension" .headerExtension -}}
-        {{- $_ := set $values "authconfigname" (include "getAuthConfigName" (list $values.svc $values.type $values.headerextension)) -}}
+        {{- $_ := set $values "upstream" .upstream -}}
+        {{- $_ := set $values "authconfigname" (include "getAuthConfigName" (list $values)) -}}
 
-{{- /*  TODO:  umleitung zu swagger */}}
-{{- /* 
-      {{- if and .Values.gloo.virtualservice.spec.virtualHost.routes.swagger.enabled .Values.gloo.virtualservice.spec.virtualHost.routes.swagger.alternativePath }}
+        {{- if $values.upstream -}}
+          {{- $_ := set $values "upstreamname" $values.upstream.name -}}
+          {{- $_ := set $values "upstreamnamespace" $values.upstream.namespace -}}
+        {{- else -}}
+          {{- $_ := set $values "upstreamname" (printf "%s-%s-svc-%v" $.Release.Namespace $values.svc $.Values.defaults.service.port) -}}
+          {{- $_ := set $values "upstreamnamespace" $.Values.defaults.upstreamNamespace -}}
+        {{- end -}}
+
+        {{- /* Set swagger redirect rule for ui auth flows */}}
+        {{- if or (eq "ui" $values.type) (eq "ui-with-strongauth" $values.type) }}
+          {{- if not $values.swaggerpathredirect }}
       - matchers:
-          - prefix: {{ .Values.gloo.virtualservice.spec.virtualHost.routes.swagger.alternativePath }}
+        - prefix: /docs
         redirectAction:
-          pathRedirect: {{ .Values.gloo.virtualservice.spec.virtualHost.routes.swagger.path }}
-      {{- end }}
-*/}}
+          pathRedirect: /swagger-ui.html
+            {{- $_ := set $values "swaggerpathredirect" true -}}
+          {{- end }}
+        {{- end }}
+
+      {{- /* Define path prefix if defined */}}
       {{- if $values.prefix }}
       - matchers:
         - prefix: {{ $values.prefix }}
@@ -101,7 +112,7 @@ spec:
           single:
             upstream:
               name: {{ $values.upstreamname }}
-              namespace: {{ $.Release.Namespace }}
+              namespace: {{ $values.upstreamnamespace }}
         {{- if eq "true" (include "authExists" (list $values.type)) }}
           options:
             extauth:
@@ -110,6 +121,8 @@ spec:
                 namespace: {{ $.Release.Namespace }}
         {{- end -}}
       {{- end }}
+
+      {{- /* Define callback path prefix if defined */}}
       {{- if $values.callbackPath }}
       - matchers:
         - prefix: {{ $values.callbackPath }}
@@ -117,7 +130,7 @@ spec:
             single:
               upstream:
                 name:  {{ $values.upstreamname }} 
-                namespace: {{ $.Release.Namespace }}
+                namespace: {{ $values.upstreamnamespace }}
         {{- if $values.type }}
           options:
             extauth:
@@ -148,33 +161,3 @@ spec:
         {{- end }}
   {{- end }}
 {{- end -}}
-
-{{- /* TODO: http-to-https redirect 
----
-apiVersion: gateway.solo.io/v1
-kind: VirtualService
-metadata:
-  name: {{ $serviceName }}-http-to-https
-  namespace: {{ .Release.Namespace }}
-spec:
-  virtualHost:
-    domains:
-      - {{ .Values.gloo.virtualservice.spec.virtualHost.domains }}
-    routes:
-      - matchers:
-        {{- if .Values.gloo.virtualservice.spec.virtualHost.routes.callbackUrlPath }}
-        - prefix: /
-        {{- else }}
-        - prefix: {{ .Values.gloo.virtualservice.spec.virtualHost.routes.swagger.path }}
-        {{- if .Values.gloo.virtualservice.spec.virtualHost.routes.swagger.alternativePath }}
-        - prefix: {{ .Values.gloo.virtualservice.spec.virtualHost.routes.swagger.alternativePath }}
-        {{- end }}
-        {{- end }}
-        redirectAction:
-          hostRedirect: {{ .Values.gloo.virtualservice.spec.virtualHost.domains }}
-          httpsRedirect: true
-{{- end }}
-
-{{- end }}
-
-*/}}
