@@ -1,10 +1,11 @@
 {{- /* Create and return AuthConfig Name */}}
 {{- define "getAuthConfigName" -}}
+  {{- $values := index . 0 -}}
   {{- $ext := "no-headerextension" -}}
-  {{- if eq true (index . 2) -}}
+  {{- if eq true $values.headerextension -}}
     {{- $ext = "with-headerextension" -}}
   {{- end -}}
-  {{- printf "%s-%s-%s" (index . 0) (index . 1) $ext }}
+  {{- printf "%s-%s-%s" $values.svc $values.type $ext }}
 {{- end -}}
 {{- define "getVirtualServiceName" -}}
   {{- printf "%s-%d" (index . 0) (index . 1) }}

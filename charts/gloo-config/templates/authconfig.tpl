@@ -10,11 +10,11 @@
     {{- $_ := set $values "callbackpath" .callbackPath -}}
     {{- $_ := set $values "headerextension" .headerExtension -}}
     {{- $_ := set $values "allowedclientids" .allowedClientIds -}}
-    {{- $_ := set $values "authconfigname" (include "getAuthConfigName" (list $values.svc $values.type $values.headerextension)) -}}
+    {{- $_ := set $values "authconfigname" (include "getAuthConfigName" (list $values)) -}}
     {{- $_ := set $values "appurl" (include "getAppUrl" (list $values $)) -}}
     {{- $_ := set $values "openidurl" (include "getOpenIDUrl" (list $values $.Values.defaults.realms.default $)) -}}
 
-    {{ printf "\n---" }}
+    {{ printf "\n---\n" }}
     {{- if eq "ui" $values.type -}}
       {{ include "auth_ui" (list $values $) }}
 

@@ -1,3 +1,5 @@
 **/*.tgz
 **/charts/*/charts
 **/charts/internal/**
+values.yaml
+samples/**
