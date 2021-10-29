@@ -36,8 +36,8 @@ spec:
         responseHeadersToAdd:
         {{- range $k, $v := $values.headermanipulation }}
           - header:
-            key: {{ $v.header.key }}
-            value: {{ $v.header.value }}
+              key: {{ $v.header.key }}
+              value: {{ $v.header.value }}
         {{- end }}
       {{- end }}
       {{- /* TODO: Backend only */}}
