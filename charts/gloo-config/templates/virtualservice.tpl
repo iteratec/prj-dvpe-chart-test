@@ -110,11 +110,11 @@ spec:
       {{- if $values.prefix }}
       - matchers:
         - prefix: {{ $values.prefix }}
-          routeAction:
-            single:
-              upstream:
-                name: {{ $values.upstreamname }}
-                namespace: {{ $values.upstreamnamespace }}
+        routeAction:
+          single:
+            upstream:
+              name: {{ $values.upstreamname }}
+              namespace: {{ $values.upstreamnamespace }}
         {{- if eq "true" (include "authExists" (list $values.type)) }}
           options:
             extauth:
@@ -128,17 +128,17 @@ spec:
       {{- if $values.callbackPath }}
       - matchers:
         - prefix: {{ $values.callbackPath }}
-          routeAction:
-            single:
-              upstream:
-                name:  {{ $values.upstreamname }} 
-                namespace: {{ $values.upstreamnamespace }}
+        routeAction:
+          single:
+            upstream:
+              name:  {{ $values.upstreamname }} 
+              namespace: {{ $values.upstreamnamespace }}
         {{- if $values.type }}
-          options:
-            extauth:
-              configRef:
-                name: {{ $values.authconfigname }}
-                namespace: {{ $.Release.Namespace }}
+        options:
+          extauth:
+            configRef:
+              name: {{ $values.authconfigname }}
+              namespace: {{ $.Release.Namespace }}
         {{- end }}
       {{- end }}
       {{- if eq "/" $values.prefix -}}
@@ -149,17 +149,17 @@ spec:
   {{- if not (hasKey $values "rootPathExist") }}
       - matchers:
         - prefix: /
-          routeAction:
-            single:
-              upstream:
-                name: {{ $values.upstreamname }}
-                namespace: {{ $.Release.Namespace }}
+        routeAction:
+          single:
+            upstream:
+              name: {{ $values.upstreamname }}
+              namespace: {{ $.Release.Namespace }}
         {{- if $values.type }}
-          options:
-            extauth:
-              configRef:
-                name: {{ $values.authconfigname }}
-                namespace: {{ $.Release.Namespace }}
+        options:
+          extauth:
+            configRef:
+              name: {{ $values.authconfigname }}
+              namespace: {{ $.Release.Namespace }}
         {{- end }}
   {{- end }}
 {{- end -}}

@@ -62,8 +62,8 @@ spec:
     {{- if not (hasKey $values "rootPathExist") }}
       - matchers:
         - prefix: /
-          redirectAction:
-            httpsRedirect: true
+        redirectAction:
+          httpsRedirect: true
     {{- end }}
   {{- end -}}
 {{- end -}}
