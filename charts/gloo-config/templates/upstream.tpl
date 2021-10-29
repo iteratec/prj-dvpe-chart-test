@@ -1,7 +1,11 @@
 {{- range $.Values.apigw }}
   {{- $values := dict -}}
   {{- $_ := set $values "svc" .svc -}}
-  {{- $_ := set $values "upstreamname" (printf "%s-%s-svc-%v" $.Release.Namespace $values.svc $.Values.defaults.service.port) -}}
+  {{- $_ := set $values "appname" .appName -}}
+  {{- $_ := set $values "svcname" .svcName -}}
+  {{- $_ := set $values "usemtls" .useMTLS -}}
+  {{- $_ := set $values "serviceport" .servicePort -}}
+  {{- $_ := set $values "upstreamname" (printf "%s-%s-svc-%v" $.Release.Namespace $values.svc $values.serviceport) -}}
   {{- $_ := set $values "upstreamnamespace" $.Values.defaults.upstreamNamespace -}}
 apiVersion: gloo.solo.io/v1
 kind: Upstream
@@ -11,10 +15,11 @@ metadata:
 spec:
   kube:
     selector:
-      app: {{ $values.svc }}  # check correct app selector
-    serviceName: {{ printf "%s-svc" $values.svc }}
+      app: {{ default $values.svc $values.appname }}
+    serviceName: {{ default (printf "%s-svc" $values.svc) $values.svcname }}
     serviceNamespace: {{ $.Release.Namespace }}
-    servicePort: {{ $.Values.defaults.service.port }}
+    servicePort: {{ $values.serviceport }}
+  {{- if $values.usemtls }}
   sslConfig:
     alpnProtocols:
       - istio
@@ -23,4 +28,5 @@ spec:
       clusterName: gateway_proxy_sds
       targetUri: 127.0.0.1:8234
       validationContextName: istio_validation_context
+  {{- end }}
 {{- end }}

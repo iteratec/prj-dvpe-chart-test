@@ -10,6 +10,7 @@
     {{- $_ := set $values "callbackpath" .callbackPath -}}
     {{- $_ := set $values "headerextension" .headerExtension -}}
     {{- $_ := set $values "allowedclientids" .allowedClientIds -}}
+    {{- $_ := set $values "clientsecret" .clientSecret -}}
     {{- $_ := set $values "authconfigname" (include "getAuthConfigName" (list $values)) -}}
     {{- $_ := set $values "appurl" (include "getAppUrl" (list $values $)) -}}
     {{- $_ := set $values "openidurl" (include "getOpenIDUrl" (list $values $.Values.defaults.realms.default $)) -}}

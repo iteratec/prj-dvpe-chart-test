@@ -4,6 +4,8 @@
   {{- $_ := set $values "internet" $val.internet -}}
   {{- $_ := set $values "cors" $val.cors -}}
   {{- $_ := set $values "headermanipulation" $val.headerManipulation -}}
+  {{- $_ := set $values "serviceport" $val.servicePort -}}
+  {{- $_ := set $values "sslsecret" $val.sslSecret -}}
   {{- $_ := set $values "virtualservicename" (include "getVirtualServiceName" (list $values.svc $key)) -}}
   {{- $_ := set $values "servicedomain" (include "getSvcDomain" (list $values $) ) -}}
   {{ printf "\n---" }}
@@ -21,7 +23,7 @@ metadata:
 spec:
   sslConfig:
     secretRef:
-      name: {{ $.Values.defaults.sslConfig.secretRef }}
+      name: {{ $values.sslsecret }}
       namespace: {{ $.Release.Namespace }}
     sniDomains:
       - {{ $values.servicedomain }}
@@ -32,12 +34,12 @@ spec:
       {{- if $values.headermanipulation }}
       headerManipulation:
         responseHeadersToAdd:
-        {{ range $k, $v := $values.headermanipulation -}}
+        {{- range $k, $v := $values.headermanipulation }}
           - header:
             key: {{ $v.header.key }}
             value: {{ $v.header.value }}
-        {{ end -}}
-      {{- end -}}
+        {{- end }}
+      {{- end }}
       {{- /* TODO: Backend only */}}
       {{- if $values.cors }} 
       cors:
@@ -89,7 +91,7 @@ spec:
           {{- $_ := set $values "upstreamname" $values.upstream.name -}}
           {{- $_ := set $values "upstreamnamespace" $values.upstream.namespace -}}
         {{- else -}}
-          {{- $_ := set $values "upstreamname" (printf "%s-%s-svc-%v" $.Release.Namespace $values.svc $.Values.defaults.service.port) -}}
+          {{- $_ := set $values "upstreamname" (printf "%s-%s-svc-%v" $.Release.Namespace $values.svc $values.serviceport) -}}
           {{- $_ := set $values "upstreamnamespace" $.Values.defaults.upstreamNamespace -}}
         {{- end -}}
 

@@ -8,6 +8,7 @@
   {{- end -}}
 {{- end -}}
 
+{{- /* Only create virtualservice for http-to-https if at least one httpsRedirect defined */}}
 {{- if $redirects.found -}}
   {{- range $key, $val := $.Values.apigw -}}
     {{- $values := dict -}}

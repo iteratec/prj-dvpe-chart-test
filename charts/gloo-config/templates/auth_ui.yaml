@@ -11,17 +11,19 @@ spec:
     - oauth2:
       oidcAuthorizationCode:
         app_url: {{ $values.appurl }}   # your UIs URL
-        callback_path: {{ required "callbackPath for ui/oauth2 flow required" $values.callbackpath }}  # your Oauth2 callback registered with Web.EAM
-        client_id: {{ required "clientId for ui/oauth2 flow required" $values.clientid }}   # 
+        callback_path: {{ required "callbackPath for type=ui required" $values.callbackpath }}  # your Oauth2 callback registered with Web.EAM
+        client_id: {{ required "clientId for type=ui required" $values.clientid }}   # 
         client_secret_ref:
             {{- /* TODO: handover client secret ref */}}
-          name: wadtfy-sample-ui-oidc-secrets             # see wadtfy-samples/wadtfy-sample-ui/templates/external-secret.yaml
+          name: {{ required "clientSecret for type=ui required" $values.clientsecret }}             # see wadtfy-samples/wadtfy-sample-ui/templates/external-secret.yaml
           namespace: {{ $.Release.Namespace }}
         issuer_url: {{ $.Values.defaults.issuerUrl }}
         session:
           cookieOptions:
+            {{- if $.Values.defaults.extauth.session.cookieDomain }}
             domain: {{ first $.Values.defaults.domains }}
-            maxAge: 7200
+            {{- end }}
+            maxAge: {{ $.Values.defaults.extauth.session.cookieTimeout }}
           redis:
             cookieName: auth0-session
             options:
