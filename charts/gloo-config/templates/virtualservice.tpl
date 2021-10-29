@@ -111,10 +111,10 @@ spec:
       - matchers:
         - prefix: {{ $values.prefix }}
           routeAction:
-          single:
-            upstream:
-              name: {{ $values.upstreamname }}
-              namespace: {{ $values.upstreamnamespace }}
+            single:
+              upstream:
+                name: {{ $values.upstreamname }}
+                namespace: {{ $values.upstreamnamespace }}
         {{- if eq "true" (include "authExists" (list $values.type)) }}
           options:
             extauth:
@@ -150,10 +150,10 @@ spec:
       - matchers:
         - prefix: /
           routeAction:
-          single:
-            upstream:
-              name: {{ $values.upstreamname }}
-              namespace: {{ $.Release.Namespace }}
+            single:
+              upstream:
+                name: {{ $values.upstreamname }}
+                namespace: {{ $.Release.Namespace }}
         {{- if $values.type }}
           options:
             extauth:
