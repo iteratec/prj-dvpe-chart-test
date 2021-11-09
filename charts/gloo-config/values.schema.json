@@ -103,24 +103,24 @@
                   "type": "array",
                   "items": {
                     "type": "string"
-                  },
-                  "httpsRedirect": {
-                    "type": "boolean"
-                  },
-                  "upstream": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "namespace": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "name"
-                    ]
                   }
+                },
+                "httpsRedirect": {
+                  "type": "boolean"
+                },
+                "upstream": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "namespace": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ]
                 }
               },
               "required": [
