@@ -106,24 +106,6 @@ spec:
           {{- end }}
         {{- end }}
 
-      {{- /* Define path prefix if defined */}}
-      {{- if $values.prefix }}
-      - matchers:
-        - prefix: {{ $values.prefix }}
-        routeAction:
-          single:
-            upstream:
-              name: {{ $values.upstreamname }}
-              namespace: {{ $values.upstreamnamespace }}
-        {{- if eq "true" (include "authExists" (list $values.type)) }}
-          options:
-            extauth:
-              configRef:
-                name: {{ $values.authconfigname }}
-                namespace: {{ $.Release.Namespace }}
-        {{- end -}}
-      {{- end }}
-
       {{- /* Define callback path prefix if defined */}}
       {{- if $values.callbackPath }}
       - matchers:
@@ -141,6 +123,25 @@ spec:
               namespace: {{ $.Release.Namespace }}
         {{- end }}
       {{- end }}
+
+      {{- /* Define path prefix if defined */}}
+      {{- if $values.prefix }}
+      - matchers:
+        - prefix: {{ $values.prefix }}
+        routeAction:
+          single:
+            upstream:
+              name: {{ $values.upstreamname }}
+              namespace: {{ $values.upstreamnamespace }}
+        {{- if eq "true" (include "authExists" (list $values.type)) }}
+        options:
+          extauth:
+            configRef:
+              name: {{ $values.authconfigname }}
+              namespace: {{ $.Release.Namespace }}
+        {{- end -}}
+      {{- end }}
+
       {{- if eq "/" $values.prefix -}}
         {{- $_ := set $values "rootPathExist" "" -}}
       {{- end -}}

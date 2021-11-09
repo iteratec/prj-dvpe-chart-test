@@ -13,7 +13,8 @@
     {{- $_ := set $values "clientsecret" .clientSecret -}}
     {{- $_ := set $values "authconfigname" (include "getAuthConfigName" (list $values)) -}}
     {{- $_ := set $values "appurl" (include "getAppUrl" (list $values $)) -}}
-    {{- $_ := set $values "openidurl" (include "getOpenIDUrl" (list $values $.Values.defaults.realms.default $)) -}}
+    {{- $_ := set $values "openidurl" (include "getOpenIDUrl" (list $.Values.defaults.realms.default $)) -}}
+    {{- $_ := set $values "issuerurl" (include "getIssuerUrl" (list $.Values.defaults.realms.default $)) -}}
 
     {{ printf "\n---\n" }}
     {{- if eq "ui" $values.type -}}
@@ -30,12 +31,12 @@
 
     {{- else if eq "m2m" $values.type -}}
       {{- /* Use M2M Realm and create OpenID URL*/}}
-      {{- $_ := set $values "openidurl" (include "getOpenIDUrl" (list $values $.Values.defaults.realms.m2m $)) -}}
+      {{- $_ := set $values "openidurl" (include "getOpenIDUrl" (list $.Values.defaults.realms.m2m $)) -}}
       {{ include "auth_m2m" (list $values $) }}
 
     {{- else if eq "m2m-with-token" $values.type -}}
       {{- /* Use M2M Realm and create OpenID URL*/}}
-      {{- $_ := set $values "openidurl" (include "getOpenIDUrl" (list $values $.Values.defaults.realms.m2m $)) -}}
+      {{- $_ := set $values "openidurl" (include "getOpenIDUrl" (list $.Values.defaults.realms.m2m $)) -}}
       {{ include "auth_m2m-with-token" (list $values $) }}
 
     {{- else -}}

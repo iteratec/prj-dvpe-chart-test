@@ -22,10 +22,14 @@
 {{- end -}}
 {{- /* Create and return OpenID URL Name */}}
 {{- define "getOpenIDUrl" -}}
-  {{- $values := index . 0 -}}
-  {{- $realm := index . 1 -}}
-  {{- $ := index . 2 -}}
+  {{- $realm := index . 0 -}}
+  {{- $ := index . 1 -}}
   {{- printf "%s/%s/%s" $.Values.defaults.issuerUrl $realm $.Values.defaults.openidConfigurationUrl -}}
+{{- end -}}
+{{- define "getIssuerUrl" -}}
+  {{- $realm := index . 0 -}}
+  {{- $ := index . 1 -}}
+  {{- printf "%s/%s/" $.Values.defaults.issuerUrl $realm -}}
 {{- end -}}
 {{- define "authExists" -}}
   {{- $allAuthTypes := list "ui" "ui-with-strongauth" "backend" "backend-with-strongauth" "m2m" "m2m-with-token" -}}

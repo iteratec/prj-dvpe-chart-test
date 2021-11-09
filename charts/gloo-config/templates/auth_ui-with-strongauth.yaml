@@ -19,7 +19,7 @@ spec:
           strongAuthenticationLevel: 4000                   # has to correspond to "acr_values" set in oauth2 element below
 
     - oauth2:
-      oidcAuthorizationCode:
+        oidcAuthorizationCode:
   {{- /* Question/Frage: ist das nicht bei Header Extension nur wichtig ?*/}}
   {{- /* {{- if eq true $values.headerextension }}
         authEndpointQueryParams:
@@ -27,25 +27,25 @@ spec:
           acr_values : strongAuth4000Service              # set strong authentication level
   {{- end }}
   */}}
-        authEndpointQueryParams:
-          acr_values : strongAuth4000Service              # set strong authentication level
-        {{- /* TODO: Fix app_url */}}
-        app_url: {{ $values.appurl }}   # your UIs URL
-        callback_path: {{ $values.callbackpath }}  # your Oauth2 callback registered with Web.EAM
-        client_id: {{ required "clientId for ui/oauth2 flow required" $values.clientid }}   # 
-        client_secret_ref:
-            {{- /* TODO: handover client secret ref */}}
-          name: wadtfy-sample-ui-oidc-secrets             # see wadtfy-samples/wadtfy-sample-ui/templates/external-secret.yaml
-          namespace: {{ $.Release.Namespace }}
-        issuer_url: {{ $.Values.defaults.issuerUrl }}
-        session:
-          cookieOptions:
-            domain: {{ first $.Values.defaults.domains }}
-            maxAge: 7200
-          redis:
-            cookieName: auth0-session
-            options:
-              host: {{ $.Values.defaults.redisUrl }}
+          authEndpointQueryParams:
+            acr_values : strongAuth4000Service              # set strong authentication level
+          {{- /* TODO: Fix app_url */}}
+          appUrl: {{ $values.appurl }}   # your UIs URL
+          callbackPath: {{ $values.callbackpath }}  # your Oauth2 callback registered with Web.EAM
+          clientId: {{ required "clientId for ui/oauth2 flow required" $values.clientid }}   # 
+          clientSecretRef:
+              {{- /* TODO: handover client secret ref */}}
+            name: wadtfy-sample-ui-oidc-secrets             # see wadtfy-samples/wadtfy-sample-ui/templates/external-secret.yaml
+            namespace: {{ $.Release.Namespace }}
+          issuerUrl: {{ $values.issuerurl }}
+          session:
+            cookieOptions:
+              domain: {{ first $.Values.defaults.domains }}
+              maxAge: 7200
+            redis:
+              cookieName: auth0-session
+              options:
+                host: {{ $.Values.defaults.redisUrl }}
 
   {{- if $values.headerextension }}
     - passThroughAuth:

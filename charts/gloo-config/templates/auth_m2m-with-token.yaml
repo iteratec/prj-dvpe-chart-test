@@ -13,7 +13,7 @@ spec:
           address: auth-passthrough-token-validation.gloo-system.svc.cluster.local:9001
         config:
             {{- /* TODO: Get URL*/}}
-          openIdConfigurationUrl: {{ include "getOpenIDUrl" (list $values $.Values.defaults.realms.default $) }}
+          openIdConfigurationUrl: {{ include "getOpenIDUrl" (list $.Values.defaults.realms.default $) }}
 
     - passThroughAuth:  # this generates the machine-to-machine token
         grpc:
