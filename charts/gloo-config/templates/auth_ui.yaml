@@ -32,7 +32,7 @@ spec:
   {{- if $values.headerextension }}
     - passThroughAuth:
         grpc:
-          address: auth-passthrough-token-validation.gloo-system.svc.cluster.local:9001
+          address: {{ $.Values.defaults.passthru.grpcAddress.headerExtension }}
         config:
           openIdConfigurationUrl: {{ $values.openidurl }}
           enableAccessTokenForwarding: {{ $.Values.defaults.passthru.enableAccessTokenForwarding }}

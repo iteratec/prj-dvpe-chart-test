@@ -10,14 +10,14 @@ spec:
   configs:
     - passThroughAuth:
         grpc:
-          address: auth-passthrough-token-validation.gloo-system.svc.cluster.local:9001
+          address: {{ $.Values.defaults.passthru.grpcAddress.strongAuth }}
         config:
             {{- /* TODO: Get URL*/}}
           openIdConfigurationUrl: {{ include "getOpenIDUrl" (list $.Values.defaults.realms.default $) }}
 
     - passThroughAuth:  # this generates the machine-to-machine token
         grpc:
-          address: auth-passthrough-client-credentials.gloo-system.svc.cluster.local:9001
+          address: {{ $.Values.defaults.passthru.grpcAddress.clientAuth }}
         config:
           openIdConfigurationUrl: {{ $values.openidurl }}
           mode: GatherCredentials                            # instruct the client-credentials plugin to act in gathering credentials mode
@@ -29,7 +29,7 @@ spec:
   {{- if $values.headerextension }}
     - passThroughAuth:
         grpc:
-          address: auth-passthrough-token-validation.gloo-system.svc.cluster.local:9001
+          address: {{ $.Values.defaults.passthru.grpcAddress.headerExtension }}
         config:
           openIdConfigurationUrl: {{ $values.openidurl }}
           enableAccessTokenForwarding: {{ $.Values.defaults.passthru.enableAccessTokenForwarding }}
