@@ -154,7 +154,7 @@ spec:
           single:
             upstream:
               name: {{ $values.upstreamname }}
-              namespace: {{ $.Release.Namespace }}
+              namespace: {{ $values.upstreamnamespace }}
         {{- if $values.type }}
         options:
           extauth:
