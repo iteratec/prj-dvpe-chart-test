@@ -2,8 +2,10 @@
 {{- define "getAuthConfigName" -}}
   {{- $values := index . 0 -}}
   {{- $ext := "no-headerextension" -}}
-  {{- if eq true $values.headerextension -}}
-    {{- $ext = "with-headerextension" -}}
+  {{- if $values.headerextension -}}
+    {{- if eq true $values.headerextension -}}
+      {{- $ext = "with-headerextension" -}}
+    {{- end -}}
   {{- end -}}
   {{- printf "%s-%s-%s" $values.svc $values.type $ext }}
 {{- end -}}
