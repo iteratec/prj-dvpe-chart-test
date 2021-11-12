@@ -4,7 +4,7 @@
   {{- $_ := set $values "internet" $val.internet -}}
   {{- $_ := set $values "cors" $val.cors -}}
   {{- $_ := set $values "headermanipulation" $val.headerManipulation -}}
-  {{- $_ := set $values "serviceport" $val.servicePort -}}
+  {{- $_ := set $values "serviceport" (default $.Values.defaults.service.port $val.servicePort) -}}
   {{- $_ := set $values "sslsecret" $val.sslSecret -}}
   {{- $_ := set $values "virtualservicename" (include "getVirtualServiceName" (list $values.svc $key)) -}}
   {{- $_ := set $values "servicedomain" (include "getSvcDomain" (list $values $) ) -}}
