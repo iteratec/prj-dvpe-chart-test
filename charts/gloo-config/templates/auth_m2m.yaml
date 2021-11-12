@@ -5,23 +5,21 @@ apiVersion: enterprise.gloo.solo.io/v1
 kind: AuthConfig
 metadata:
   name: {{ $values.authconfigname }}
-  namespace: {{ $.Release.Namespace }}                       # your kubernetes namespace
+  namespace: {{ $.Release.Namespace }}
 spec:
   configs:
     - passThroughAuth:
         grpc:
-          address: {{ $.Values.defaults.passthru.grpcAddress.strongAuth }}
+          address: {{ $.Values.defaults.passthru.grpcAddress.tokenAuth }}
         config:
-            {{- /* TODO: Get URL*/}}
           openIdConfigurationUrl: {{ $values.openidurl }}
-          mode: {{ $values.authpluginmode }}     # instruct the client-credentials plugin to act in token validation mode
-          allowedClientIds:           # the client IDs (registered with Web.EAM) to allow access for
-          {{- required "allowedClientIds for type=m2m required" $values.allowedclientids -}}
-          {{- range $values.allowedclientids }}
-            - {{ . }}
-          {{ end -}}
+          mode: {{ $values.authpluginmode }}
+          allowedClientIds:
+          {{- range (required "allowedClientIds for type=m2m required" $values.allowedclientids) }}
+            {{ printf "- %s" . }}
+          {{- end }}
           clientId: unused            # this parameter isn't needed in 'VerifyAccessToken' mode, but unfortunately mandatory for now
-      
+
   {{- if $values.headerextension }}
     - passThroughAuth:
         grpc:

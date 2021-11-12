@@ -73,6 +73,9 @@
               }
             }
           },
+          "strongAuthLevel": {
+            "type": "integer"
+          },          
           "routes": {
             "type": "array",
             "items": {
@@ -120,6 +123,12 @@
                   },
                   "required": [
                     "name"
+                  ]
+                },
+                "authPluginMode": {
+                  "type": "string",
+                  "enum": [
+                    "VerifyAccessToken", "GatherCredentials"
                   ]
                 }
               },

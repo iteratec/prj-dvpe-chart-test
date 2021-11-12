@@ -10,7 +10,7 @@ spec:
   configs:
     - passThroughAuth:
         grpc:
-          address: {{ $.Values.defaults.passthru.grpcAddress.strongAuth }}
+          address: {{ $.Values.defaults.passthru.grpcAddress.tokenAuth }}
         config:
             {{- /* TODO: Get URL*/}}
           openIdConfigurationUrl: {{ include "getOpenIDUrl" (list $.Values.defaults.realms.default $) }}

@@ -5,36 +5,25 @@ apiVersion: enterprise.gloo.solo.io/v1
 kind: AuthConfig
 metadata:
   name: {{ $values.authconfigname }}
-  namespace: {{ $.Release.Namespace }}                       # your kubernetes namespace
+  namespace: {{ $.Release.Namespace }}
 spec:
   configs:
     - passThroughAuth:
         grpc:
-            {{- /* TODO: Get URL */}}
           address: {{ $.Values.defaults.passthru.grpcAddress.strongAuth }}
         config:
           openIdConfigurationUrl: {{ $values.openidurl }}
-            {{- /* TODO: Configurable Level */}}
-          strongAuthenticationLevel: 4000                   # has to correspond to "acr_values" set in oauth2 element below
+          strongAuthenticationLevel: {{ $values.strongauthlevel }}
 
     - oauth2:
         oidcAuthorizationCode:
-  {{- /* Question/Frage: ist das nicht bei Header Extension nur wichtig ?*/}}
-  {{- /* {{- if eq true $values.headerextension }}
-        authEndpointQueryParams:
-          # TODO: Configurable Level
-          acr_values : strongAuth4000Service              # set strong authentication level
-  {{- end }}
-  */}}
           authEndpointQueryParams:
-            acr_values : strongAuth4000Service              # set strong authentication level
-          {{- /* TODO: Fix app_url */}}
-          appUrl: {{ $values.appurl }}   # your UIs URL
-          callbackPath: {{ $values.callbackpath }}  # your Oauth2 callback registered with Web.EAM
-          clientId: {{ required "clientId for type=ui required" $values.clientid }}   # 
+            acr_values: {{ $values.acrvalue }}
+          appUrl: {{ $values.appurl }}
+          callbackPath: {{ $values.callbackpath }}
+          clientId: {{ required "clientId for type=ui required" $values.clientid }}
           clientSecretRef:
-              {{- /* TODO: handover client secret ref */}}
-            name: {{ required "clientSecret for type=ui required" $values.clientsecret }}             # see wadtfy-samples/wadtfy-sample-ui/templates/external-secret.yaml
+            name: {{ required "clientSecret for type=ui required" $values.clientsecret }}
             namespace: {{ $.Release.Namespace }}
           issuerUrl: {{ $values.issuerurl }}
           session:
@@ -51,7 +40,6 @@ spec:
         grpc:
           address: {{ $.Values.defaults.passthru.grpcAddress.headerExtension }}
         config:
-            {{- /* TODO: Get URL */}}
           openIdConfigurationUrl: {{ $values.openidurl }}
           enableAccessTokenForwarding: {{ $.Values.defaults.passthru.enableAccessTokenForwarding }}
           enableSubjectForwarding: {{ $.Values.defaults.passthru.enableSubjectForwarding }}

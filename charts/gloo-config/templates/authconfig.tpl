@@ -2,6 +2,7 @@
   {{- $values := dict -}}
   {{- $_ := set $values "svc" .svc -}}
   {{- $_ := set $values "internet" .internet -}}
+  {{- $_ := set $values "strongauthlevel" .strongAuthLevel -}}
   {{- range $key, $val := .routes }}
     {{- $_ := set $values "prefix" $val.prefix -}}
     {{- $_ := set $values "redirect" $val.redirect -}}
@@ -22,6 +23,7 @@
       {{ include "auth_ui" (list $values $) }}
 
     {{- else if eq "ui-with-strongauth" $values.type -}}
+      {{- $_ := set $values "acrvalue" (include "getAcrValue" (list $values.strongauthlevel)) -}}
       {{ include "auth_ui-with-strongauth" (list $values $) }}
 
     {{- else if eq "backend" $values.type -}}

@@ -5,25 +5,21 @@ apiVersion: enterprise.gloo.solo.io/v1
 kind: AuthConfig
 metadata:
   name: {{ $values.authconfigname }}
-  namespace: {{ $.Release.Namespace }}                       # your kubernetes namespace
+  namespace: {{ $.Release.Namespace }}
 spec:
   configs:
     - passThroughAuth:
         grpc:
           address: {{ $.Values.defaults.passthru.grpcAddress.strongAuth }}
         config:
-            {{- /* TODO: Get URL*/}}
           openIdConfigurationUrl: {{ $values.openidurl }}
-            {{- /* TODO: Configurable Level */}}
-          strongAuthenticationLevel: 4000
+          strongAuthenticationLevel: {{ $values.strongauthlevel }}
       
   {{- if $values.headerextension }}
     - passThroughAuth:
         grpc:
-            {{- /* TODO: Get URL*/}}
           address: {{ $.Values.defaults.passthru.grpcAddress.headerExtension }}
         config:
-            {{- /* TODO: Get URL*/}}
           openIdConfigurationUrl: {{ $values.openidurl }}
           enableAccessTokenForwarding: {{ $.Values.defaults.passthru.enableAccessTokenForwarding }}
           enableSubjectForwarding: {{ $.Values.defaults.passthru.enableSubjectForwarding }}

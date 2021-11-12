@@ -43,3 +43,7 @@
     {{- end -}}
   {{- end -}}
 {{- end -}}
+{{- define "getAcrValue" -}}
+  {{- $strongauthlevel := index . 0 -}}
+  {{- printf "strongAuth%vService" $strongauthlevel -}}
+{{- end -}}
