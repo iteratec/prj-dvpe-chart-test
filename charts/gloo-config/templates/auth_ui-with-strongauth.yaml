@@ -31,16 +31,16 @@ spec:
           {{- /* TODO: Fix app_url */}}
           appUrl: {{ $values.appurl }}   # your UIs URL
           callbackPath: {{ $values.callbackpath }}  # your Oauth2 callback registered with Web.EAM
-          clientId: {{ required "clientId for ui/oauth2 flow required" $values.clientid }}   # 
+          clientId: {{ required "clientId for type=ui required" $values.clientid }}   # 
           clientSecretRef:
               {{- /* TODO: handover client secret ref */}}
-            name: wadtfy-sample-ui-oidc-secrets             # see wadtfy-samples/wadtfy-sample-ui/templates/external-secret.yaml
+            name: {{ required "clientSecret for type=ui required" $values.clientsecret }}             # see wadtfy-samples/wadtfy-sample-ui/templates/external-secret.yaml
             namespace: {{ $.Release.Namespace }}
           issuerUrl: {{ $values.issuerurl }}
           session:
             cookieOptions:
               domain: {{ first $.Values.defaults.domains }}
-              maxAge: 7200
+              maxAge: {{ $.Values.defaults.extauth.session.cookieTimeout }}
             redis:
               cookieName: auth0-session
               options:
