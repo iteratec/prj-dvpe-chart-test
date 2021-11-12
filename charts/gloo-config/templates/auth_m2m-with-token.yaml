@@ -5,23 +5,22 @@ apiVersion: enterprise.gloo.solo.io/v1
 kind: AuthConfig
 metadata:
   name: {{ $values.authconfigname }}
-  namespace: {{ $.Release.Namespace }}                       # your kubernetes namespace
+  namespace: {{ $.Release.Namespace }}
 spec:
   configs:
     - passThroughAuth:
         grpc:
           address: {{ $.Values.defaults.passthru.grpcAddress.tokenAuth }}
         config:
-            {{- /* TODO: Get URL*/}}
           openIdConfigurationUrl: {{ include "getOpenIDUrl" (list $.Values.defaults.realms.default $) }}
 
-    - passThroughAuth:  # this generates the machine-to-machine token
+    - passThroughAuth:
         grpc:
           address: {{ $.Values.defaults.passthru.grpcAddress.clientAuth }}
         config:
           openIdConfigurationUrl: {{ $values.openidurl }}
-          mode: {{ $values.authpluginmode }}                            # instruct the client-credentials plugin to act in gathering credentials mode
-          clientId: {{ required "clientId for type=m2m required" $values.clientid }}     # the client ID (registered with Web.EAM) to act as
+          mode: {{ $values.authpluginmode }}
+          clientId: {{ required "clientId for type=m2m required" $values.clientid }}
           clientSecretRef:
             Name: {{ required "clientSecret for type=m2m required" $values.clientsecret }}
             Namespace: {{ $.Release.Namespace }}

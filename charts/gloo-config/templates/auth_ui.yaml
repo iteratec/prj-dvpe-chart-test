@@ -5,16 +5,16 @@ apiVersion: enterprise.gloo.solo.io/v1
 kind: AuthConfig
 metadata:
   name: {{ $values.authconfigname }}
-  namespace: {{ $.Release.Namespace }}                       # your kubernetes namespace
+  namespace: {{ $.Release.Namespace }}
 spec:
   configs:
     - oauth2:
         oidcAuthorizationCode:
-          appUrl: {{ $values.appurl }}   # your UIs URL
-          callbackPath: {{ required "callbackPath for type=ui required" $values.callbackpath }}  # your Oauth2 callback registered with Web.EAM
-          clientId: {{ required "clientId for type=ui required" $values.clientid }}   # 
+          appUrl: {{ $values.appurl }}
+          callbackPath: {{ required "callbackPath for type=ui required" $values.callbackpath }}
+          clientId: {{ required "clientId for type=ui required" $values.clientid }}
           clientSecretRef:
-            name: {{ required "clientSecret for type=ui required" $values.clientsecret }}             # see wadtfy-samples/wadtfy-sample-ui/templates/external-secret.yaml
+            name: {{ required "clientSecret for type=ui required" $values.clientsecret }}
             namespace: {{ $.Release.Namespace }}
           issuerUrl: {{ $values.issuerurl }}
           session:

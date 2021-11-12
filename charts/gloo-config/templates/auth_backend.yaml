@@ -5,14 +5,13 @@ apiVersion: enterprise.gloo.solo.io/v1
 kind: AuthConfig
 metadata:
   name: {{ $values.authconfigname }}
-  namespace: {{ $.Release.Namespace }}                       # your kubernetes namespace
+  namespace: {{ $.Release.Namespace }}
 spec:
   configs:
     - passThroughAuth:
         grpc:
           address: {{ $.Values.defaults.passthru.grpcAddress.tokenAuth }}
         config:
-            {{- /* TODO: Get URL*/}}
           openIdConfigurationUrl: {{ $values.openidurl }}
       
   {{- if $values.headerextension }}
