@@ -2,15 +2,16 @@
   {{- $values := dict -}}
   {{- $_ := set $values "svc" .svc -}}
   {{- $_ := set $values "internet" .internet -}}
-  {{- range .routes }}
-    {{- $_ := set $values "prefix" .prefix -}}
-    {{- $_ := set $values "redirect" .redirect -}}
-    {{- $_ := set $values "type" .type -}}
+  {{- range $key, $val := .routes }}
+    {{- $_ := set $values "prefix" $val.prefix -}}
+    {{- $_ := set $values "redirect" $val.redirect -}}
+    {{- $_ := set $values "type" $val.type -}}
     {{- $_ := set $values "clientid" (.clientId | default "") -}}
-    {{- $_ := set $values "callbackpath" .callbackPath -}}
-    {{- $_ := set $values "headerextension" .headerExtension -}}
-    {{- $_ := set $values "allowedclientids" .allowedClientIds -}}
-    {{- $_ := set $values "clientsecret" .clientSecret -}}
+    {{- $_ := set $values "callbackpath" $val.callbackPath -}}
+    {{- $_ := set $values "headerextension" $val.headerExtension -}}
+    {{- $_ := set $values "allowedclientids" $val.allowedClientIds -}}
+    {{- $_ := set $values "clientsecret" $val.clientSecret -}}
+    {{- $_ := set $values "authpluginmode" $val.authPluginMode -}}
     {{- $_ := set $values "authconfigname" (include "getAuthConfigName" (list $values)) -}}
     {{- $_ := set $values "appurl" (include "getAppUrl" (list $values $)) -}}
     {{- $_ := set $values "openidurl" (include "getOpenIDUrl" (list $.Values.defaults.realms.default $)) -}}

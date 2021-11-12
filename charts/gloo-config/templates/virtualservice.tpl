@@ -16,9 +16,9 @@ metadata:
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- if eq true $values.internet }}
-      {{ $.Values.defaults.metadata.glooGateway}}: public
+      {{ $.Values.defaults.metadata.glooGateway }}: public
     {{- else }}
-      {{ $.Values.defaults.metadata.glooGateway}}: private
+      {{ $.Values.defaults.metadata.glooGateway }}: private
     {{- end }}
 spec:
   sslConfig:
