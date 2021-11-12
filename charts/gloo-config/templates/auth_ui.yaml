@@ -14,15 +14,12 @@ spec:
           callbackPath: {{ required "callbackPath for type=ui required" $values.callbackpath }}  # your Oauth2 callback registered with Web.EAM
           clientId: {{ required "clientId for type=ui required" $values.clientid }}   # 
           clientSecretRef:
-              {{- /* TODO: handover client secret ref */}}
             name: {{ required "clientSecret for type=ui required" $values.clientsecret }}             # see wadtfy-samples/wadtfy-sample-ui/templates/external-secret.yaml
             namespace: {{ $.Release.Namespace }}
           issuerUrl: {{ $values.issuerurl }}
           session:
             cookieOptions:
-              {{- if $.Values.defaults.extauth.session.cookieDomain }}
               domain: {{ first $.Values.defaults.domains }}
-              {{- end }}
               maxAge: {{ $.Values.defaults.extauth.session.cookieTimeout }}
             redis:
               cookieName: auth0-session
