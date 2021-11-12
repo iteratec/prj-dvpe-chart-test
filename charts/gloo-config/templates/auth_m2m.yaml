@@ -14,9 +14,9 @@ spec:
         config:
             {{- /* TODO: Get URL*/}}
           openIdConfigurationUrl: {{ $values.openidurl }}
-          mode: VerifyAccessToken     # instruct the client-credentials plugin to act in token validation mode
+          mode: {{ $values.authpluginmode }}     # instruct the client-credentials plugin to act in token validation mode
           allowedClientIds:           # the client IDs (registered with Web.EAM) to allow access for
-          {{- required "Require allowedClientIds" $values.allowedclientids -}}
+          {{- required "allowedClientIds for type=m2m required" $values.allowedclientids -}}
           {{- range $values.allowedclientids }}
             - {{ . }}
           {{ end -}}

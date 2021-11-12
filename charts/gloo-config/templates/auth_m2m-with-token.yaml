@@ -20,11 +20,11 @@ spec:
           address: {{ $.Values.defaults.passthru.grpcAddress.clientAuth }}
         config:
           openIdConfigurationUrl: {{ $values.openidurl }}
-          mode: GatherCredentials                            # instruct the client-credentials plugin to act in gathering credentials mode
-          clientId: 7fe887fd-9e58-4999-bdc0-c13b2c84bae2     # the client ID (registered with Web.EAM) to act as
+          mode: {{ $values.authpluginmode }}                            # instruct the client-credentials plugin to act in gathering credentials mode
+          clientId: {{ required "clientId for type=m2m required" $values.clientid }}     # the client ID (registered with Web.EAM) to act as
           clientSecretRef:
-            Name: client-credentials-via-token-validation-m2m-secret
-            Namespace: wadtfy-samples
+            Name: {{ required "clientSecret for type=m2m required" $values.clientsecret }}
+            Namespace: {{ $.Release.Namespace }}
                   
   {{- if $values.headerextension }}
     - passThroughAuth:
