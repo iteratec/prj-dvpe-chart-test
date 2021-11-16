@@ -4,7 +4,8 @@
   {{- $_ := set $values "internet" $val.internet -}}
   {{- $_ := set $values "cors" $val.cors -}}
   {{- $_ := set $values "headermanipulation" $val.headerManipulation -}}
-  {{- $_ := set $values "rootprefix" $val.rootPrefix -}}
+  {{- $_ := set $values "rootprefix" ($val.rootPrefix | toString) -}}
+  {{- $_ := set $values "swaggerprefix" ($val.swaggerPrefix | toString) -}}
   {{- $_ := set $values "serviceport" (default $.Values.defaults.service.port $val.servicePort) -}}
   {{- $_ := set $values "sslsecret" (default $.Values.defaults.sslConfig.secretRef $val.sslSecret) -}}
   {{- $_ := set $values "virtualservicename" (include "getVirtualServiceName" (list $values.svc $key)) -}}
@@ -97,7 +98,7 @@ spec:
 
         {{- /* Set swagger redirect rule for ui auth flows */}}
         {{- if or (eq "ui" $values.type) (eq "ui-with-strongauth" $values.type) }}
-          {{- if not $values.swaggerpathredirect }}
+          {{- if and (not $values.swaggerpathredirect) (or (eq $values.swaggerprefix "true") (eq $values.swaggerprefix "<nil>")) }}
       - matchers:
         - prefix: /docs
         redirectAction:
@@ -147,7 +148,7 @@ spec:
       {{- end -}}
   {{- end -}}
   {{- /* Set root prefix if not exist */}}
-  {{- if and (not (hasKey $values "rootPathExist")) ($values.rootprefix) }}
+  {{- if and (not (hasKey $values "rootPathExist")) (or (eq $values.rootprefix "true") (eq $values.rootprefix "<nil>")) }}
       - matchers:
         - prefix: /
         routeAction:
