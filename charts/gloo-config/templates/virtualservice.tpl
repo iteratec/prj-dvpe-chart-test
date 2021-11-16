@@ -150,7 +150,7 @@ spec:
   {{- /* Set root prefix if not exist */}}
   {{- if and (not (hasKey $values "rootPathExist")) (or (eq $values.rootprefix "true") (eq $values.rootprefix "<nil>")) }}
       - matchers:
-        - prefix: /
+        - regex: '^/([^/\s]|$).*'
         routeAction:
           single:
             upstream:
