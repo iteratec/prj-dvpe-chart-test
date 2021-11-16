@@ -11,10 +11,10 @@ spec:
     - oauth2:
         oidcAuthorizationCode:
           appUrl: {{ $values.appurl }}
-          callbackPath: {{ required "callbackPath for type=ui required" $values.callbackpath }}
-          clientId: {{ required "clientId for type=ui required" $values.clientid }}
+          callbackPath: {{ $values.callbackpath }}
+          clientId: {{ $values.clientid }}
           clientSecretRef:
-            name: {{ required "clientSecret for type=ui required" $values.clientsecret }}
+            name: {{ $values.clientsecret }}
             namespace: {{ $.Release.Namespace }}
           issuerUrl: {{ $values.issuerurl }}
           session:

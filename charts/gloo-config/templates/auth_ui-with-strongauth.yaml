@@ -21,9 +21,9 @@ spec:
             acr_values: {{ $values.acrvalue }}
           appUrl: {{ $values.appurl }}
           callbackPath: {{ $values.callbackpath }}
-          clientId: {{ required "clientId for type=ui required" $values.clientid }}
+          clientId: {{ $values.clientid }}
           clientSecretRef:
-            name: {{ required "clientSecret for type=ui required" $values.clientsecret }}
+            name: {{ $values.clientsecret }}
             namespace: {{ $.Release.Namespace }}
           issuerUrl: {{ $values.issuerurl }}
           session:

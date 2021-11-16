@@ -5,7 +5,7 @@
   {{- $_ := set $values "cors" $val.cors -}}
   {{- $_ := set $values "headermanipulation" $val.headerManipulation -}}
   {{- $_ := set $values "serviceport" (default $.Values.defaults.service.port $val.servicePort) -}}
-  {{- $_ := set $values "sslsecret" $val.sslSecret -}}
+  {{- $_ := set $values "sslsecret" (default $.Values.defaults.sslConfig.secretRef $val.sslSecret) -}}
   {{- $_ := set $values "virtualservicename" (include "getVirtualServiceName" (list $values.svc $key)) -}}
   {{- $_ := set $values "servicedomain" (include "getSvcDomain" (list $values $) ) -}}
   {{ printf "\n---" }}
@@ -40,7 +40,6 @@ spec:
               value: {{ $v.header.value }}
         {{- end }}
       {{- end }}
-      {{- /* TODO: Backend only */}}
       {{- if $values.cors }} 
       cors:
         allowCredentials: {{ default $.Values.defaults.cors.allowCredentials $values.cors.allowCredentials }}
@@ -82,7 +81,7 @@ spec:
         {{- $_ := set $values "redirect" .redirect -}}
         {{- $_ := set $values "type" .type -}}
         {{- $_ := set $values "clientid" .clientId  -}}
-        {{- $_ := set $values "callbackPath" .callbackPath -}}
+        {{- $_ := set $values "callbackPath" (default $.Values.defaults.callbackPath .callbackPath) -}}
         {{- $_ := set $values "headerextension" .headerExtension -}}
         {{- $_ := set $values "upstream" .upstream -}}
         {{- $_ := set $values "authconfigname" (include "getAuthConfigName" (list $values)) -}}

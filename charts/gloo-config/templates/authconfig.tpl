@@ -7,11 +7,11 @@
     {{- $_ := set $values "prefix" $val.prefix -}}
     {{- $_ := set $values "redirect" $val.redirect -}}
     {{- $_ := set $values "type" $val.type -}}
-    {{- $_ := set $values "clientid" (.clientId | default "") -}}
-    {{- $_ := set $values "callbackpath" $val.callbackPath -}}
+    {{- $_ := set $values "clientid" $val.clientId -}}
+    {{- $_ := set $values "callbackpath" (default $.Values.defaults.callbackPath $val.callbackPath) -}}
+    {{- $_ := set $values "clientsecret" $val.clientSecret -}}
     {{- $_ := set $values "headerextension" $val.headerExtension -}}
     {{- $_ := set $values "allowedclientids" $val.allowedClientIds -}}
-    {{- $_ := set $values "clientsecret" $val.clientSecret -}}
     {{- $_ := set $values "authpluginmode" $val.authPluginMode -}}
     {{- $_ := set $values "authconfigname" (include "getAuthConfigName" (list $values)) -}}
     {{- $_ := set $values "appurl" (include "getAppUrl" (list $values $)) -}}

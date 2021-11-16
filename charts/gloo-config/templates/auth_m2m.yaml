@@ -15,7 +15,7 @@ spec:
           openIdConfigurationUrl: {{ $values.openidurl }}
           mode: {{ $values.authpluginmode }}
           allowedClientIds:
-          {{- range (required "allowedClientIds for type=m2m required" $values.allowedclientids) }}
+          {{- range $values.allowedclientids }}
             {{ printf "- %s" . }}
           {{- end }}
           clientId: unused            # this parameter isn't needed in 'VerifyAccessToken' mode, but unfortunately mandatory for now

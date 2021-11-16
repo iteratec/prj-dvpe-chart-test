@@ -20,9 +20,9 @@ spec:
         config:
           openIdConfigurationUrl: {{ $values.openidurl }}
           mode: {{ $values.authpluginmode }}
-          clientId: {{ required "clientId for type=m2m required" $values.clientid }}
+          clientId: {{ $values.clientid }}
           clientSecretRef:
-            Name: {{ required "clientSecret for type=m2m required" $values.clientsecret }}
+            Name: {{ $values.clientsecret }}
             Namespace: {{ $.Release.Namespace }}
                   
   {{- if $values.headerextension }}

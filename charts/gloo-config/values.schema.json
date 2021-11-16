@@ -81,12 +81,6 @@
             "items": {
               "type": "object",
               "properties": {
-                "clientId": {
-                  "$ref": "#/definitions/saneClientID"
-                },
-                "redirectUrl": {
-                  "type": "string"
-                },
                 "prefix": {
                   "$ref": "#/definitions/sanePrefix"
                 },
@@ -96,8 +90,17 @@
                     "ui", "ui-with-strongauth", "backend", "backend-with-strongauth", "m2m", "m2m-with-token"
                   ]
                 },
+                "clientId": {
+                  "$ref": "#/definitions/saneClientID"
+                },
                 "callbackPath": {
                   "$ref": "#/definitions/sanePrefix"
+                },
+                "clientSecret": {
+                  "type": "string"
+                },
+                "redirectUrl": {
+                  "type": "string"
                 },
                 "headerExtension": {
                   "type": "boolean"
@@ -132,6 +135,44 @@
                   ]
                 }
               },
+              "allOf": [
+                {
+                  "if": {
+                    "properties": { "type": { "const": "ui" } },
+                    "required": ["type"]
+                  },
+                  "then": {
+                    "required": ["clientId", "clientSecret"]
+                  }
+                },
+                {
+                  "if": {
+                    "properties": { "type": { "const": "ui-with-strongauth" } },
+                    "required": ["type"]
+                  },
+                  "then": {
+                    "required": ["clientId", "clientSecret"]
+                  }
+                },
+                {
+                  "if": {
+                    "properties": { "type": { "const": "m2m" } },
+                    "required": ["type"]
+                  },
+                  "then": {
+                    "required": ["allowedClientIds"]
+                  }
+                },
+                {
+                  "if": {
+                    "properties": { "type": { "const": "m2m-with-token" } },
+                    "required": ["type"]
+                  },
+                  "then": {
+                    "required": ["clientId", "clientSecret"]
+                  }
+                }
+              ],
               "required": [
                 "prefix"
               ]
