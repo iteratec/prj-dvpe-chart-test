@@ -13,6 +13,12 @@
           "internet": {
             "type": "boolean"
           },
+          "rootPrefix": {
+            "type": "boolean"
+          },
+          "swaggerPrefix": {
+            "type": "boolean"
+          },
           "cors": {
             "type": "object",
             "properties": {
