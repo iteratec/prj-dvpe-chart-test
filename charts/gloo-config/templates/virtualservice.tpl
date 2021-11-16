@@ -4,6 +4,7 @@
   {{- $_ := set $values "internet" $val.internet -}}
   {{- $_ := set $values "cors" $val.cors -}}
   {{- $_ := set $values "headermanipulation" $val.headerManipulation -}}
+  {{- $_ := set $values "rootprefix" $val.rootPrefix -}}
   {{- $_ := set $values "serviceport" (default $.Values.defaults.service.port $val.servicePort) -}}
   {{- $_ := set $values "sslsecret" (default $.Values.defaults.sslConfig.secretRef $val.sslSecret) -}}
   {{- $_ := set $values "virtualservicename" (include "getVirtualServiceName" (list $values.svc $key)) -}}
@@ -146,7 +147,7 @@ spec:
       {{- end -}}
   {{- end -}}
   {{- /* Set root prefix if not exist */}}
-  {{- if not (hasKey $values "rootPathExist") }}
+  {{- if and (not (hasKey $values "rootPathExist")) ($values.rootprefix) }}
       - matchers:
         - prefix: /
         routeAction:
