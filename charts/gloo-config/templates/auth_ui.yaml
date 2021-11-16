@@ -22,7 +22,7 @@ spec:
               domain: {{ first $.Values.defaults.domains }}
               maxAge: {{ $.Values.defaults.extauth.session.cookieTimeout }}
             redis:
-              cookieName: auth0-session
+              cookieName: {{ $values.sessioncachename }}
               options:
                 host: {{ $.Values.defaults.redisUrl }}
 

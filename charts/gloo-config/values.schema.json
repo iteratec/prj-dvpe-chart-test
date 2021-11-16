@@ -120,6 +120,12 @@
                 "httpsRedirect": {
                   "type": "boolean"
                 },
+                "sessionCacheName": {
+                  "type": "string",
+                  "enum":[
+                    "auth0-session", "wadtfy-prod", "wadtfy-int", "wadtfy-test"
+                  ]
+                },
                 "upstream": {
                   "type": "object",
                   "properties": {
