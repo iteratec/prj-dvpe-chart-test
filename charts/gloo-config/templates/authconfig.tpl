@@ -12,7 +12,7 @@
     {{- $_ := set $values "clientsecret" $val.clientSecret -}}
     {{- $_ := set $values "headerextension" $val.headerExtension -}}
     {{- $_ := set $values "allowedclientids" $val.allowedClientIds -}}
-    {{- $_ := set $values "sessioncachename" (default $.Values.defaults.extauth.session.redis.cacheName $val.sessionCacheName) -}}
+    {{- $_ := set $values "sessioncachename" (default $.Values.defaults.extauth.session.cacheName $val.sessionCacheName) -}}
     {{- $_ := set $values "authpluginmode" $val.authPluginMode -}}
     {{- $_ := set $values "authconfigname" (include "getAuthConfigName" (list $values)) -}}
     {{- $_ := set $values "appurl" (include "getAppUrl" (list $values $)) -}}
