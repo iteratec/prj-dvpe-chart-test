@@ -2,6 +2,144 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "properties": {
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "callbackPath": {
+          "type": "string"
+        },
+        "cors": {
+          "type": "object",
+          "properties": {
+            "allowCredentials": {
+              "type": "boolean"
+            },
+            "maxAge": {
+              "type": "string"
+            }
+          },
+          "required": [ "allowCredentials", "maxAge" ]
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "extauth": {
+          "type": "object",
+          "properties": {
+            "redis": {
+              "type": "object",
+              "properties": {
+                "cacheName": {
+                  "type": "string"
+                }
+              },
+              "required": [ "cacheName" ]
+            },
+            "session": {
+              "type": "object",
+              "properties": {
+                "cookieTimeout": {
+                  "type": "integer"
+                }
+              },
+              "required": [ "cookieTimeout" ]
+            },
+            "timeout": {
+              "type": "string"
+            }
+          },
+          "required": [ "redis", "session", "timeout" ]
+        },
+        "issuerUrl": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "glooGateway": {
+              "type": "string"
+            }
+          },
+          "required": [ "glooGateway" ]
+        },
+        "openidConfigurationUrl": {
+          "type": "string"
+        },
+        "passthru": {
+          "type": "object",
+          "properties": {
+            "enableAccessTokenForwarding": {
+              "type": "boolean"
+            },
+            "enableQAccountMatching": {
+              "type": "boolean"
+            },
+            "enableSubjectForwarding": {
+              "type": "boolean"
+            },
+            "grpcAddress": {
+              "type": "object",
+              "properties": {
+                "headerExtension": {
+                  "type": "string"
+                },
+                "strongAuth": {
+                  "type": "string"
+                },
+                "tokenAuth": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "realms": {
+          "type": "object",
+          "properties": {
+            "default": {
+              "type": "string"
+            },
+            "m2m": {
+              "type": "string"
+            }
+          },
+          "required": [ "default", "m2m" ]
+        },
+        "redisUrl": {
+          "type": "string"
+        },
+        "service": {
+          "type": "object",
+          "properties": {
+            "port": {
+              "type": "integer"
+            }
+          },
+          "required": [ "port" ]
+        },
+        "sslConfig": {
+          "type": "object",
+          "properties": {
+            "secretRef": {
+              "type": "string"
+            }
+          },
+          "required": [ "secretRef" ]
+        },
+        "upstreamNamespace": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "domains", "issuerUrl", "metadata", "realms", "openidConfigurationUrl", 
+        "redisUrl", "extauth", "callbackPath", "service", 
+        "sslConfig", "cors", "upstreamNamespace"
+      ]    
+    },
+
     "apigw": {
       "type": "array",
       "items": {
@@ -16,11 +154,23 @@
           "useMTLS": {
             "type": "boolean"
           },
+          "sslSecret": {
+            "type": "string"
+          },          
           "rootPrefix": {
             "type": "boolean"
           },
           "swaggerPrefix": {
             "type": "boolean"
+          },
+          "appName": {
+            "type": "string"
+          },
+          "svcName": {
+            "type": "string"
+          },
+          "servicePort": {
+            "type": "integer"
           },
           "cors": {
             "type": "object",
@@ -202,7 +352,7 @@
     }
   },
   "required": [
-    "apigw"
+    "apigw", "defaults"
   ],
   "definitions": {
     "sanePrefix": { "type": "string", "pattern": "^[/][A-z]?" },
