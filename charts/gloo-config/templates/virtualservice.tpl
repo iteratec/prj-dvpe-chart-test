@@ -107,8 +107,8 @@ spec:
           {{- end }}
         {{- end }}
 
-      {{- /* Define callback path prefix if defined */}}
-      {{- if $values.callbackPath }}
+      {{- /* Define callback path prefix */}}
+      {{- if or (eq "ui" $values.type) (eq "ui-with-strongauth" $values.type) }}
       - matchers:
         - prefix: {{ $values.callbackPath }}
         routeAction:
