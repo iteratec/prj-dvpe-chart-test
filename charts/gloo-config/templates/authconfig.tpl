@@ -25,12 +25,18 @@
 
     {{- else if eq "ui-with-strongauth" $values.type -}}
       {{- $_ := set $values "acrvalue" (include "getAcrValue" (list $values.strongauthlevel)) -}}
+      {{- if empty $values.strongauthlevel -}}
+        {{- fail "require strongAuthLevel in svc definition to use strongauth" -}}
+      {{- end -}}
       {{ include "auth_ui-with-strongauth" (list $values $) }}
 
     {{- else if eq "backend" $values.type -}}
       {{ include "auth_backend" (list $values $) }}
 
     {{- else if eq "backend-with-strongauth" $values.type -}}
+      {{- if empty $values.strongauthlevel -}}
+        {{- fail "require strongAuthLevel in svc definition to use strongauth" -}}
+      {{- end -}}
       {{ include "auth_backend-with-strongauth" (list $values $) }}
 
     {{- else if eq "m2m" $values.type -}}
