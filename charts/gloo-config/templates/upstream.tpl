@@ -3,10 +3,11 @@
   {{- $_ := set $values "svc" $val.svc -}}
   {{- $_ := set $values "appname" $val.appName -}}
   {{- $_ := set $values "svcname" $val.svcName -}}
-  {{- $_ := set $values "usemtls" $val.useMTLS -}}
+  {{- $_ := set $values "usemtls" ($val.useMTLS | toString) -}}
   {{- $_ := set $values "serviceport" (default $.Values.defaults.service.port $val.servicePort)  -}}
-  {{- $_ := set $values "upstreamname" (printf "%s-%s-svc-%v" $.Release.Namespace $values.svc $values.serviceport) -}}
+  {{- $_ := set $values "upstreamname" (include "getUpStreamName" (list $.Release.Namespace $values.svc $values.serviceport $key)) -}}
   {{- $_ := set $values "upstreamnamespace" $.Values.defaults.upstreamNamespace -}}
+  {{ printf "\n---" }}
 apiVersion: gloo.solo.io/v1
 kind: Upstream
 metadata:
@@ -19,7 +20,7 @@ spec:
     serviceName: {{ default (printf "%s-svc" $values.svc) $values.svcname }}
     serviceNamespace: {{ $.Release.Namespace }}
     servicePort: {{ $values.serviceport }}
-  {{- if $values.usemtls }}
+  {{- if or (eq $values.usemtls "true") (eq $values.usemtls "<nil>") }}
   sslConfig:
     alpnProtocols:
       - istio

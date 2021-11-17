@@ -92,7 +92,7 @@ spec:
           {{- $_ := set $values "upstreamname" $values.upstream.name -}}
           {{- $_ := set $values "upstreamnamespace" $values.upstream.namespace -}}
         {{- else -}}
-          {{- $_ := set $values "upstreamname" (printf "%s-%s-svc-%v" $.Release.Namespace $values.svc $values.serviceport) -}}
+          {{- $_ := set $values "upstreamname" (include "getUpStreamName" (list $.Release.Namespace $values.svc $values.serviceport $key)) -}}
           {{- $_ := set $values "upstreamnamespace" $.Values.defaults.upstreamNamespace -}}
         {{- end -}}
 

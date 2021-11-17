@@ -13,6 +13,9 @@
           "internet": {
             "type": "boolean"
           },
+          "useMTLS": {
+            "type": "boolean"
+          },
           "rootPrefix": {
             "type": "boolean"
           },
