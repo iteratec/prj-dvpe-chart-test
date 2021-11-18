@@ -7,7 +7,6 @@
   {{- $_ := set $values "serviceport" (default $.Values.defaults.service.port $val.servicePort)  -}}
   {{- $_ := set $values "upstreamname" (include "getUpStreamName" (list $.Release.Namespace $values.svc $values.serviceport $key)) -}}
   {{- $_ := set $values "upstreamnamespace" $.Values.defaults.upstreamNamespace -}}
-  {{- $_ := set $values "virtualservicename" (include "getVirtualServiceName" (list $values.svc $key)) -}}
   {{ printf "\n---" }}
 apiVersion: gloo.solo.io/v1
 kind: Upstream
@@ -18,7 +17,7 @@ spec:
   kube:
     selector:
       app: {{ default $values.svc $values.appname }}
-    serviceName: {{ default $values.virtualservicename $values.svcname }}
+    serviceName: {{ default (printf "%s-svc" $values.svc) $values.svcname }}
     serviceNamespace: {{ $.Release.Namespace }}
     servicePort: {{ $values.serviceport }}
   {{- if or (eq $values.usemtls "true") (eq $values.usemtls "<nil>") }}
