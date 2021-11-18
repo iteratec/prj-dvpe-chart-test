@@ -17,8 +17,8 @@ metadata:
 spec:
   kube:
     selector:
-      app: {{ default $values.virtualservicename $values.appname }}
-    serviceName: {{ default (printf "%s-svc" $values.svc) $values.svcname }}
+      app: {{ default $values.svc $values.appname }}
+    serviceName: {{ default $values.virtualservicename $values.svcname }}
     serviceNamespace: {{ $.Release.Namespace }}
     servicePort: {{ $values.serviceport }}
   {{- if or (eq $values.usemtls "true") (eq $values.usemtls "<nil>") }}
