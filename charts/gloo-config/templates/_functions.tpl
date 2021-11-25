@@ -7,7 +7,7 @@
       {{- $ext = "with-headerextension" -}}
     {{- end -}}
   {{- end -}}
-  {{- printf "%s-%s-%s" $values.svc $values.type $ext }}
+  {{- printf "%s-%s-%s" $values.svc $values.authenticationtype $ext }}
 {{- end -}}
 {{- /* Generate VirtualService Name */}}
 {{- define "getVirtualServiceName" -}}

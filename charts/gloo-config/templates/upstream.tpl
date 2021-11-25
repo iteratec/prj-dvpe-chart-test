@@ -1,4 +1,4 @@
-{{- range $key, $val := $.Values.apigw }}
+{{ range $key, $val := $.Values.apigw -}}
   {{- $values := dict -}}
   {{- $_ := set $values "svc" $val.svc -}}
   {{- $_ := set $values "appname" $val.appName -}}
@@ -7,7 +7,7 @@
   {{- $_ := set $values "serviceport" (default $.Values.defaults.service.port $val.servicePort)  -}}
   {{- $_ := set $values "upstreamname" (include "getUpStreamName" (list $.Release.Namespace $values.svc $values.serviceport $key)) -}}
   {{- $_ := set $values "upstreamnamespace" $.Values.defaults.upstreamNamespace -}}
-  {{ printf "\n---" }}
+---
 apiVersion: gloo.solo.io/v1
 kind: Upstream
 metadata:
@@ -30,4 +30,4 @@ spec:
       targetUri: 127.0.0.1:8234
       validationContextName: istio_validation_context
   {{- end }}
-{{- end }}
+{{ end -}}

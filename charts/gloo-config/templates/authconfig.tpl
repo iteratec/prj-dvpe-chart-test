@@ -1,4 +1,4 @@
-{{- range $.Values.apigw }}
+{{ range $.Values.apigw -}}
   {{- $values := dict -}}
   {{- $_ := set $values "svc" .svc -}}
   {{- $_ := set $values "internet" .internet -}}
@@ -6,7 +6,7 @@
   {{- range $key, $val := .routes }}
     {{- $_ := set $values "prefix" $val.prefix -}}
     {{- $_ := set $values "redirect" $val.redirect -}}
-    {{- $_ := set $values "type" $val.type -}}
+    {{- $_ := set $values "authenticationtype" $val.authenticationType -}}
     {{- $_ := set $values "clientid" $val.clientId -}}
     {{- $_ := set $values "callbackpath" (default $.Values.defaults.callbackPath $val.callbackPath) -}}
     {{- $_ := set $values "clientsecret" $val.clientSecret -}}
@@ -19,32 +19,31 @@
     {{- $_ := set $values "openidurl" (include "getOpenIDUrl" (list $.Values.defaults.realms.default $)) -}}
     {{- $_ := set $values "issuerurl" (include "getIssuerUrl" (list $.Values.defaults.realms.default $)) -}}
 
-    {{ printf "\n---\n" }}
-    {{- if eq "ui" $values.type -}}
+    {{- if eq "ui" $values.authenticationtype -}}
       {{ include "auth_ui" (list $values $) }}
 
-    {{- else if eq "ui-with-strongauth" $values.type -}}
+    {{- else if eq "ui-with-strongauth" $values.authenticationtype -}}
       {{- $_ := set $values "acrvalue" (include "getAcrValue" (list $values.strongauthlevel)) -}}
       {{- if empty $values.strongauthlevel -}}
         {{- fail "require strongAuthLevel in svc definition to use strongauth" -}}
       {{- end -}}
       {{ include "auth_ui-with-strongauth" (list $values $) }}
 
-    {{- else if eq "backend" $values.type -}}
+    {{- else if eq "backend" $values.authenticationtype -}}
       {{ include "auth_backend" (list $values $) }}
 
-    {{- else if eq "backend-with-strongauth" $values.type -}}
+    {{- else if eq "backend-with-strongauth" $values.authenticationtype -}}
       {{- if empty $values.strongauthlevel -}}
         {{- fail "require strongAuthLevel in svc definition to use strongauth" -}}
       {{- end -}}
       {{ include "auth_backend-with-strongauth" (list $values $) }}
 
-    {{- else if eq "m2m" $values.type -}}
+    {{- else if eq "m2m" $values.authenticationtype -}}
       {{- /* Use M2M Realm and create OpenID URL*/}}
       {{- $_ := set $values "openidurl" (include "getOpenIDUrl" (list $.Values.defaults.realms.m2m $)) -}}
       {{ include "auth_m2m" (list $values $) }}
 
-    {{- else if eq "m2m-with-token" $values.type -}}
+    {{- else if eq "m2m-with-token" $values.authenticationtype -}}
       {{- /* Use M2M Realm and create OpenID URL*/}}
       {{- $_ := set $values "openidurl" (include "getOpenIDUrl" (list $.Values.defaults.realms.m2m $)) -}}
       {{ include "auth_m2m-with-token" (list $values $) }}
@@ -53,4 +52,4 @@
     {{- end -}}
 
   {{- end -}}
-{{- end -}}
+{{ end -}}

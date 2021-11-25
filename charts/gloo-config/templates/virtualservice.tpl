@@ -1,4 +1,4 @@
-{{- range $key, $val := $.Values.apigw -}}
+{{ range $key, $val := $.Values.apigw -}}
   {{- $values := dict -}}
   {{- $_ := set $values "svc" $val.svc -}}
   {{- $_ := set $values "internet" $val.internet -}}
@@ -10,7 +10,7 @@
   {{- $_ := set $values "sslsecret" (default $.Values.defaults.sslConfig.secretRef $val.sslSecret) -}}
   {{- $_ := set $values "virtualservicename" (include "getVirtualServiceName" (list $values.svc $key)) -}}
   {{- $_ := set $values "servicedomain" (include "getSvcDomain" (list $values $) ) -}}
-  {{ printf "\n---" }}
+---
 apiVersion: gateway.solo.io/v1
 kind: VirtualService
 metadata:
@@ -81,7 +81,7 @@ spec:
     {{- range .routes }}
         {{- $_ := set $values "prefix" .prefix -}}
         {{- $_ := set $values "redirect" .redirect -}}
-        {{- $_ := set $values "type" .type -}}
+        {{- $_ := set $values "authenticationtype" .authenticationType -}}
         {{- $_ := set $values "clientid" .clientId  -}}
         {{- $_ := set $values "callbackPath" (default $.Values.defaults.callbackPath .callbackPath) -}}
         {{- $_ := set $values "headerextension" .headerExtension -}}
@@ -97,7 +97,7 @@ spec:
         {{- end -}}
 
         {{- /* Set swagger redirect rule for ui auth flows */}}
-        {{- if or (eq "ui" $values.type) (eq "ui-with-strongauth" $values.type) }}
+        {{- if or (eq "ui" $values.authenticationtype) (eq "ui-with-strongauth" $values.authenticationtype) }}
           {{- if and (not $values.swaggerpathredirect) (or (eq $values.swaggerprefix "true") (eq $values.swaggerprefix "<nil>")) }}
       - matchers:
         - prefix: /docs
@@ -108,7 +108,7 @@ spec:
         {{- end }}
 
       {{- /* Define callback path prefix */}}
-      {{- if or (eq "ui" $values.type) (eq "ui-with-strongauth" $values.type) }}
+      {{- if or (eq "ui" $values.authenticationtype) (eq "ui-with-strongauth" $values.authenticationtype) }}
       - matchers:
         - prefix: {{ $values.callbackPath }}
         routeAction:
@@ -116,7 +116,7 @@ spec:
             upstream:
               name:  {{ $values.upstreamname }} 
               namespace: {{ $values.upstreamnamespace }}
-        {{- if $values.type }}
+        {{- if $values.authenticationtype }}
         options:
           extauth:
             configRef:
@@ -134,7 +134,7 @@ spec:
             upstream:
               name: {{ $values.upstreamname }}
               namespace: {{ $values.upstreamnamespace }}
-        {{- if eq "true" (include "authExists" (list $values.type)) }}
+        {{- if eq "true" (include "authExists" (list $values.authenticationtype)) }}
         options:
           extauth:
             configRef:
@@ -156,7 +156,7 @@ spec:
             upstream:
               name: {{ $values.upstreamname }}
               namespace: {{ $values.upstreamnamespace }}
-        {{- if $values.type }}
+        {{- if $values.authenticationtype }}
         options:
           extauth:
             configRef:
@@ -164,4 +164,4 @@ spec:
               namespace: {{ $.Release.Namespace }}
         {{- end }}
   {{- end }}
-{{- end -}}
+{{ end -}}

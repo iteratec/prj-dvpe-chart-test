@@ -1,6 +1,7 @@
-{{- define "auth_m2m" -}}
+{{ define "auth_m2m" -}}
   {{- $values := index . 0 -}}
   {{- $ := index . 1 -}}
+---
 apiVersion: enterprise.gloo.solo.io/v1
 kind: AuthConfig
 metadata:
@@ -30,4 +31,4 @@ spec:
           enableSubjectForwarding: {{ $.Values.defaults.passthru.enableSubjectForwarding }}
           enableQAccountMatching: {{ $.Values.defaults.passthru.enableQAccountMatching }}
   {{- end }}
-{{- end -}}
+{{ end -}}

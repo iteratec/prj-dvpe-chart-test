@@ -1,6 +1,6 @@
 {{- /* Check if any redirects are defined */}}
 {{- $redirects := dict -}}
-{{- range $.Values.apigw -}}
+{{ range $.Values.apigw -}}
   {{- range .routes -}}
     {{- if .httpsRedirect -}}
       {{- $_ := set $redirects "found" true -}}
@@ -16,8 +16,7 @@
     {{- $_ := set $values "internet" $val.internet -}}
     {{- $_ := set $values "virtualservicename" (include "getVirtualServiceName" (list (printf "%s-%s" $values.svc "http-to-https") $key)) -}}
     {{- $_ := set $values "servicedomain" (include "getSvcDomain" (list $values $) ) -}}
-
-    {{ printf "\n---" }}
+---
 apiVersion: gateway.solo.io/v1
 kind: VirtualService
 metadata:
@@ -35,10 +34,10 @@ spec:
       - {{ $values.servicedomain }}
     routes:
       {{- range .routes }}
-        {{- $_ := set $values "type" .type -}}
+        {{- $_ := set $values "authenticationtype" .authenticationType -}}
         {{- $_ := set $values "prefix" .prefix -}}
         {{- $_ := set $values "httpsredirect" .httpsRedirect -}}
-        {{- if or (eq "ui" $values.type) (eq "ui-with-strongauth" $values.type) }}
+        {{- if or (eq "ui" $values.authenticationtype) (eq "ui-with-strongauth" $values.authenticationtype) }}
           {{- if not $values.swaggerpathredirect }}
       - matchers:
         - prefix: /swagger-ui.html
@@ -66,4 +65,4 @@ spec:
           httpsRedirect: true
     {{- end }}
   {{- end -}}
-{{- end -}}
+{{ end -}}
