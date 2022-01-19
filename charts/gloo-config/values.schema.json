@@ -33,7 +33,7 @@
                 "cacheName": {
                   "type": "string",
                   "enum":[
-                    "-prod", "wadtfy-int", "wadtfy-test"
+                    "wadtfy-prod", "wadtfy-int", "wadtfy-dev"
                   ]
                 }
               },
@@ -379,7 +379,7 @@
                         "cacheName": {
                           "type": "string",
                           "enum":[
-                            "wadtfy-prod", "wadtfy-int", "wadtfy-test"
+                            "wadtfy-prod", "wadtfy-int", "wadtfy-dev"
                           ]
                         }
                       }
