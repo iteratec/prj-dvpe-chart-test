@@ -29,14 +29,14 @@ spec:
       minimumProtocolVersion: {{ $values.sslconfig.minTlsVersion }}
     secretRef:
       {{- if $values.sslconfig.useCustomIssuer }}
-      name: {{ $values.svc }}-private-tls-by-issuer
-      namespace: {{ $.Release.Namespace -}}
+      name: {{ $values.sslconfig.secretRef }}
+      namespace: {{ $values.sslconfig.secretRefNamespace }}
       {{- else if $values.internet }}
       name: gloo-public-tls
       namespace: "gloo-system"
       {{- else }}
-      name: {{ $values.sslconfig.secretRef }}
-      namespace: {{ $values.sslconfig.secretRefNamespace }}
+      name: {{ $values.svc }}-private-tls-by-issuer
+      namespace: {{ $.Release.Namespace -}}
       {{- end }}
     sniDomains:
       {{- range $values.servicedomain }}

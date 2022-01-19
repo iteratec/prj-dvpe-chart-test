@@ -313,7 +313,29 @@
               "secretRefNamespace": {
                 "type": "string"
               }
-            }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": { "useCustomIssuer": { "const": true } },
+                  "required": ["useCustomIssuer"]
+                },
+                "then": {
+                  "properties": {
+                    "useCustomIssuer": {
+                      "type": "boolean"
+                    },
+                    "secretRef": {
+                      "type": "string"
+                    },
+                    "secretRefNamespace": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["secretRef", "secretRefNamespace"]
+                }
+              }
+            ]
           }, 
           "routes": {
             "type": "array",
