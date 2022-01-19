@@ -20,10 +20,10 @@ spec:
           issuerUrl: {{ $values.issuerurl }}
           session:
             cookieOptions:
-              domain: {{ first $.Values.defaults.domains }}
-              maxAge: {{ $.Values.defaults.extauth.session.cookieTimeout }}
+              domain: {{ first $values.servicedomain }}
+              maxAge: {{ $values.cookietimeout }}
             redis:
-              cookieName: {{ $values.sessioncachename }}
+              cookieName: {{ $values.cachename }}
               options:
                 host: {{ $.Values.defaults.redisUrl }}
 
@@ -33,8 +33,8 @@ spec:
           address: {{ $.Values.defaults.passthru.grpcAddress.headerExtension }}
         config:
           openIdConfigurationUrl: {{ $values.openidurl }}
-          enableAccessTokenForwarding: {{ $.Values.defaults.passthru.enableAccessTokenForwarding }}
-          enableSubjectForwarding: {{ $.Values.defaults.passthru.enableSubjectForwarding }}
-          enableQAccountMatching: {{ $.Values.defaults.passthru.enableQAccountMatching }}
+    {{- range $key, $value := $values.passthru.config }}
+          {{ $key }}: {{ $value }}
+    {{- end }}
   {{- end }}
 {{ end -}}

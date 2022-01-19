@@ -22,9 +22,9 @@ spec:
           address: {{ $.Values.defaults.passthru.grpcAddress.headerExtension }}
         config:
           openIdConfigurationUrl: {{ $values.openidurl }}
-          enableAccessTokenForwarding: {{ $.Values.defaults.passthru.enableAccessTokenForwarding }}
-          enableSubjectForwarding: {{ $.Values.defaults.passthru.enableSubjectForwarding }}
-          enableQAccountMatching: {{ $.Values.defaults.passthru.enableQAccountMatching }}
+    {{- range $key, $value := $values.passthru.config }}
+          {{ $key }}: {{ $value }}
+    {{- end }}
   {{- end }}
 {{ end -}}
 

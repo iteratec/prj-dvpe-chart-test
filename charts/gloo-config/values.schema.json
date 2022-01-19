@@ -5,9 +5,6 @@
     "defaults": {
       "type": "object",
       "properties": {
-        "callbackPath": {
-          "type": "string"
-        },
         "cors": {
           "type": "object",
           "properties": {
@@ -20,20 +17,24 @@
           },
           "required": [ "allowCredentials", "maxAge" ]
         },
-        "domains": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "env": {
+          "type": "string",
+          "enum": ["dev", "int", "prod"]
         },
-        "extauth": {
+        "timeout": {
+          "type": "string"
+        },
+        "authenticationConfig": {
           "type": "object",
           "properties": {
             "redis": {
               "type": "object",
               "properties": {
                 "cacheName": {
-                  "type": "string"
+                  "type": "string",
+                  "enum":[
+                    "-prod", "wadtfy-int", "wadtfy-test"
+                  ]
                 }
               },
               "required": [ "cacheName" ]
@@ -47,11 +48,11 @@
               },
               "required": [ "cookieTimeout" ]
             },
-            "timeout": {
-              "type": "string"
+            "callbackPath": {
+              "$ref": "#/definitions/sanePrefix"
             }
           },
-          "required": [ "redis", "session", "timeout" ]
+          "required": [ "redis", "session", "callbackPath" ]
         },
         "issuerUrl": {
           "type": "string"
@@ -70,15 +71,9 @@
         },
         "passthru": {
           "type": "object",
-          "properties": {
-            "enableAccessTokenForwarding": {
-              "type": "boolean"
-            },
-            "enableQAccountMatching": {
-              "type": "boolean"
-            },
-            "enableSubjectForwarding": {
-              "type": "boolean"
+          "properties": {        
+            "config": {
+              "type": "null"
             },
             "grpcAddress": {
               "type": "object",
@@ -92,9 +87,15 @@
                 "tokenAuth": {
                   "type": "string"
                 }
-              }
+              },
+              "required": [
+                "headerExtension", "strongAuth", "tokenAuth"
+              ]
             }
-          }
+          },
+          "required": [
+            "grpcAddress"
+          ]
         },
         "realms": {
           "type": "object",
@@ -123,21 +124,74 @@
         "sslConfig": {
           "type": "object",
           "properties": {
+            "minTlsVersion": {
+              "type": "string",
+              "enum": [
+                "TLSv1_2", "TLSv1_3"
+              ]
+            },
+            "useCustomIssuer": {
+              "type": "boolean"
+            },
             "secretRef": {
+              "type": "string"
+            },
+            "secretRefNamespace": {
               "type": "string"
             }
           },
-          "required": [ "secretRef" ]
-        },
-        "upstreamNamespace": {
-          "type": "string"
+          "required": [ "minTlsVersion" ],
+          "allOf": [
+            {
+              "if": {
+                "properties": { "useCustomIssuer": { "const": false } },
+                "required": ["useCustomIssuer"]
+              },
+              "then": {
+                "properties": {
+                  "certificate": {
+                    "type": "object",
+                    "properties": {
+                      "issuerGroup": {
+                        "type": "string"
+                      },
+                      "organization": {
+                        "type": "string"
+                      },
+                      "country": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "string" 
+                      },
+                      "province": {
+                        "type": "string"
+                      },
+                      "organizationalUnit": {
+                        "type": "string"
+                      },
+                      "emailAddresses": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "type": "string"
+                        }
+                      }
+                    },
+                    "required": [ "issuerGroup", "organization", "country", "location", "province", "organizationalUnit" ]
+                  }
+                },
+                "required": ["certificate"]
+              }
+            }
+          ]
         }
       },
-      "required": [
-        "domains", "issuerUrl", "metadata", "realms", "openidConfigurationUrl", 
-        "redisUrl", "extauth", "callbackPath", "service", 
-        "sslConfig", "cors", "upstreamNamespace"
-      ]    
+      "required": [ 
+        "env", "issuerUrl", "metadata", "realms", "openidConfigurationUrl", 
+        "redisUrl", "authenticationConfig", "service", 
+        "sslConfig", "cors", "passthru", "timeout"
+      ]
     },
 
     "apigw": {
@@ -151,12 +205,6 @@
           "internet": {
             "type": "boolean"
           },
-          "useMTLS": {
-            "type": "boolean"
-          },
-          "sslSecret": {
-            "type": "string"
-          },          
           "rootPrefix": {
             "type": "boolean"
           },
@@ -171,6 +219,18 @@
           },
           "servicePort": {
             "type": "integer"
+          },
+          "csrf": {
+            "type": "object",
+            "properties": {
+              "allowSubdomain": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": ["allowSubdomain"]
           },
           "cors": {
             "type": "object",
@@ -235,6 +295,26 @@
           "strongAuthLevel": {
             "type": "integer"
           },          
+          "sslConfig": {
+            "type": "object",
+            "properties": {
+              "minTlsVersion": {
+                "type": "string",
+                "enum": [
+                  "TLSv1_2", "TLSv1_3"
+                ]  
+              },
+              "useCustomIssuer": {
+                "type": "boolean"
+              },
+              "secretRef": {
+                "type": "string"
+              },
+              "secretRefNamespace": {
+                "type": "string"
+              }
+            }
+          }, 
           "routes": {
             "type": "array",
             "items": {
@@ -249,35 +329,11 @@
                     "ui", "ui-with-strongauth", "backend", "backend-with-strongauth", "m2m", "m2m-with-token"
                   ]
                 },
-                "clientId": {
-                  "$ref": "#/definitions/saneClientID"
-                },
-                "callbackPath": {
-                  "$ref": "#/definitions/sanePrefix"
-                },
                 "clientSecret": {
                   "type": "string"
                 },
                 "redirectUrl": {
                   "type": "string"
-                },
-                "headerExtension": {
-                  "type": "boolean"
-                },
-                "allowedClientIds": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "httpsRedirect": {
-                  "type": "boolean"
-                },
-                "sessionCacheName": {
-                  "type": "string",
-                  "enum":[
-                    "auth0-session", "wadtfy-prod", "wadtfy-int", "wadtfy-test"
-                  ]
                 },
                 "upstream": {
                   "type": "object",
@@ -293,48 +349,149 @@
                     "name"
                   ]
                 },
-                "authPluginMode": {
-                  "type": "string",
-                  "enum": [
-                    "VerifyAccessToken", "GatherCredentials"
-                  ]
+                "authenticationConfig": {
+                  "type": "object",
+                  "properties": {
+                    "allowedClientIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "authPluginMode": {
+                      "type": "string",
+                      "enum": [
+                        "VerifyAccessToken", "GatherCredentials"
+                      ]
+                    },
+                    "callbackPath": {
+                      "$ref": "#/definitions/sanePrefix"
+                    },    
+                    "clientId": {
+                      "$ref": "#/definitions/saneClientID"
+                    },
+                    "headerExtension": {
+                      "type": "boolean"
+                    },
+                    "redis": {
+                      "type": "object",
+                      "properties": {
+                        "cacheName": {
+                          "type": "string",
+                          "enum":[
+                            "wadtfy-prod", "wadtfy-int", "wadtfy-test"
+                          ]
+                        }
+                      }
+                    },
+                    "session": {
+                      "type": "object",
+                      "properties": {
+                        "cookieTimeout": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }                  
                 }
               },
               "allOf": [
                 {
                   "if": {
-                    "properties": { "type": { "const": "ui" } },
-                    "required": ["type"]
+                    "properties": { "authenticationType": { "const": "ui" } },
+                    "required": ["authenticationType"]
                   },
                   "then": {
-                    "required": ["clientId", "clientSecret"]
+                    "properties": {
+                      "authenticationConfig": {
+                        "type": "object",
+                        "properties": {
+                          "clientId": {
+                            "$ref": "#/definitions/saneClientID"
+                          },
+                          "clientSecret": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["clientId", "clientSecret"]
+                      }
+                    },
+                    "required": ["authenticationConfig"]
                   }
                 },
                 {
                   "if": {
-                    "properties": { "type": { "const": "ui-with-strongauth" } },
-                    "required": ["type"]
+                    "properties": { "authenticationType": { "const": "ui-with-strongauth" } },
+                    "required": ["authenticationType"]
                   },
                   "then": {
-                    "required": ["clientId", "clientSecret"]
+                    "properties": {
+                      "authenticationConfig": {
+                        "type": "object",
+                        "properties": {
+                          "clientId": {
+                            "$ref": "#/definitions/saneClientID"
+                          },
+                          "clientSecret": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["clientId", "clientSecret"]
+                      }
+                    },
+                    "required": ["authenticationConfig"]
                   }
                 },
                 {
                   "if": {
-                    "properties": { "type": { "const": "m2m" } },
-                    "required": ["type"]
+                    "properties": { "authenticationType": { "const": "m2m" } },
+                    "required": ["authenticationType"]
                   },
                   "then": {
-                    "required": ["allowedClientIds"]
+                    "properties": {
+                      "authenticationConfig": {
+                        "type": "object",
+                        "properties": {
+                          "allowedClientIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "required": ["allowedClientIds"]
+                      }
+                    },
+                    "required": ["authenticationConfig"]
                   }
                 },
                 {
                   "if": {
-                    "properties": { "type": { "const": "m2m-with-token" } },
-                    "required": ["type"]
+                    "properties": { "authenticationType": { "const": "m2m-with-token" } },
+                    "required": ["authenticationType"]
                   },
                   "then": {
-                    "required": ["clientId", "clientSecret"]
+                    "properties": {
+                      "authenticationConfig": {
+                        "type": "object",
+                        "properties": {
+                          "clientId": {
+                            "$ref": "#/definitions/saneClientID"
+                          },
+                          "clientSecret": {
+                            "type": "string"
+                          },
+                          "authPluginMode": {
+                            "type": "string",
+                            "enum": [
+                              "VerifyAccessToken", "GatherCredentials"
+                            ]
+                          }
+                        },
+                        "required": ["clientId", "clientSecret", "authPluginMode"]
+                      }
+                    },
+                    "required": ["authenticationConfig"]
                   }
                 }
               ],
