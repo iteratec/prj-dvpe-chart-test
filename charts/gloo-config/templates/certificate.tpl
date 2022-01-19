@@ -8,7 +8,6 @@
   {{- if and (not $values.internet) (not $values.sslconfig.useCustomIssuer) }}
 ---
 apiVersion: cert-manager.io/v1
-internet: {{ $values.internet }}
 kind: Certificate
 metadata:
   name: {{ $values.svc }}-certificate-by-issuer
