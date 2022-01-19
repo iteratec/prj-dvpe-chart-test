@@ -29,15 +29,15 @@ spec:
       - {{ $values.sslconfig.certificate.province }}
     organizationalUnits:
       - {{ $values.sslconfig.certificate.organizationalUnit }}
-    dnsNames:
-    {{- range $values.servicedomain }}
-      {{- if . }}
-      - {{ . }}
-      {{- end }}
+  dnsNames:
+  {{- range $values.servicedomain }}
+    {{- if . }}
+    - {{ . }}
     {{- end }}
-    emailAddresses:
-    {{- range $values.sslconfig.certificate.emailAddresses }}
-      - {{ . }}
-    {{- end }}
+  {{- end }}
+  emailAddresses:
+  {{- range $values.sslconfig.certificate.emailAddresses }}
+    - {{ . }}
+  {{- end }}
   {{- end }}
 {{- end }}
