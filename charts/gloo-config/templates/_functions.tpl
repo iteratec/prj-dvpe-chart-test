@@ -121,10 +121,7 @@ Create and return the name of Upstream resource based on Parameters
 
 ### Parameters: 
 
-- param1 (string)
-- param2 (string)
-- param3 (string)
-- param4 (int)
+- global values (interface)
 
 ### Return:
 
@@ -132,13 +129,14 @@ value (string)
 
 ### Example:
 
-{{ $var := (include "getUpStreamName" (list "backend" "upstream" "int" 2)) }}
+{{ $var := (include "getUpStreamName" $dict) }}
 {{ print $var }}
 -> backend-upstream-svc-int-2 
 
 */}}
 {{- define "getUpStreamName" -}}
-  {{- printf "%s-%s-svc-%v" (index . 0) (index . 1) (index . 2) }}
+  {{- $values := index . 0 -}}
+  {{- printf "%v" $values.svc }}
 {{- end -}}
 
 {{- /* Generate AuthConfig AppUrl 

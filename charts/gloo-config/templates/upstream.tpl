@@ -4,8 +4,7 @@
   {{- $_ := set $values "appname" $val.appName -}}
   {{- $_ := set $values "svcname" $val.svcName -}}
   {{- $_ := set $values "serviceport" (default $.Values.defaults.service.port $val.servicePort)  -}}
-{{- /* {{- $_ := set $values "upstreamname" (include "getUpStreamName" (list $.Release.Namespace $values.svc $values.serviceport $key)) -}} */}}
-  {{- $_ := set $values "upstreamname" (include "getUpStreamName" (list $.Release.Namespace $values.svc $values.serviceport)) -}}
+  {{- $_ := set $values "upstreamname" (include "getUpStreamName" (list $values)) -}}
   {{- $_ := set $values "upstreamnamespace" $.Release.Namespace -}}
 ---
 apiVersion: gloo.solo.io/v1
