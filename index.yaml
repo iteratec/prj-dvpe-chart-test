@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   gloo-config:
   - apiVersion: v2
+    appVersion: 0.2.7
+    created: "2022-01-19T15:19:48.258725732Z"
+    description: A Helm chart for Gloo Configurations
+    digest: efa9db84459822f9bb0d4b30ba2da5a35a9f24e44d912addeb9a4a3963149fda
+    name: gloo-config
+    type: application
+    urls:
+    - https://github.com/iteratec/prj-dvpe-chart-test/releases/download/gloo-config-0.2.7/gloo-config-0.2.7.tgz
+    version: 0.2.7
+  - apiVersion: v2
     appVersion: 0.2.6
     created: "2022-01-19T13:54:30.475910157Z"
     description: A Helm chart for Gloo Configurations
@@ -321,4 +331,4 @@ entries:
     urls:
     - https://github.com/iteratec/prj-dvpe-chart-test/releases/download/gloo-config-0.1.2/gloo-config-0.1.2.tgz
     version: 0.1.2
-generated: "2022-01-19T13:54:30.476253662Z"
+generated: "2022-01-19T15:19:48.259825082Z"
