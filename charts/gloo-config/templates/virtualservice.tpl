@@ -95,7 +95,9 @@ spec:
         {{ if $values.cors.allowSubDomains -}}
         allowOriginRegex:
           {{- range $values.cors.allowSubDomains }}
-          - {{ . | replace "." "[.]" | replace ".*" "https://([a-zA-Z0-9]+[.-])*[a-zA-Z0-9]+[.]" | quote }}
+            {{- $str := replace "." "[.]" . }}
+            {{- $str = regexReplaceAll "^(https|http)://(.*)" $str "${2}" }}
+          - {{ regexReplaceAll "(.*)" $str "https://([a-zA-Z0-9]+[.-])*[a-zA-Z0-9]+[.]${1}" }} 
           {{- end }}
         {{ end -}}
         {{ if $values.cors.exposeHeaders -}}
