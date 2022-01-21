@@ -386,7 +386,7 @@ value (string)
 */}}
 {{- define "getclientSecretRef" -}}
   {{- $values := index . 0 -}}
-  {{- if not ($values.authenticationconfig).clientSecret -}}
+  {{- if not ($values.authenticationconfig).externalSecretClientSecretRef -}}
     {{- if or (eq "ui" $values.authenticationtype) (eq "ui-with-strongauth" $values.authenticationtype) -}}
       {{- printf "%v-oidc-secrets" $values.svc -}}
     {{ else if or (eq "m2m-with-token" $values.authenticationtype) -}}
@@ -395,6 +395,6 @@ value (string)
       {{- printf "%v-client-secret" $values.svc -}}
     {{- end -}}
   {{- else -}}
-    {{- printf ($values.authenticationconfig).clientSecret -}}
+    {{- printf ($values.authenticationconfig).externalSecretClientSecretRef -}}
   {{- end -}}
 {{- end -}}

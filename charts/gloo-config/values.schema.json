@@ -348,9 +348,6 @@
                     "ui", "ui-with-strongauth", "backend", "backend-with-strongauth", "m2m", "m2m-with-token"
                   ]
                 },
-                "clientSecret": {
-                  "type": "string"
-                },
                 "redirectUrl": {
                   "type": "string"
                 },
@@ -425,17 +422,32 @@
                           "clientId": {
                             "$ref": "#/definitions/saneClientID"
                           },
-                          "clientSecret": {
+                          "externalSecretClientSecretRef": {
                             "type": "string"
                           },
-                          "externalSecretKey": {
+                          "externalSecretClientSecretKey": {
                             "type": "string"
                           },
-                          "externalSecretRoleArn": {
+                          "externalSecretClientSecretRoleArn": {
                             "type": "string"
                           }
                         },
-                        "required": ["clientId", "externalSecretKey"]
+                        "required": ["clientId"],
+                        "allOf": [
+                          {
+                            "if": {
+                                "properties": { "externalSecretClientSecretKey": { "type": "null" } }
+                            },
+                            "then": {
+                              "properties": {
+                                "externalSecretClientSecretRef": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": ["externalSecretClientSecretRef"]
+                            }
+                          }
+                        ]
                       }
                     },
                     "required": ["authenticationConfig"]
@@ -454,17 +466,32 @@
                           "clientId": {
                             "$ref": "#/definitions/saneClientID"
                           },
-                          "clientSecret": {
+                          "externalSecretClientSecretRef": {
                             "type": "string"
                           },
-                          "externalSecretKey": {
+                          "externalSecretClientSecretKey": {
                             "type": "string"
                           },
-                          "externalSecretRoleArn": {
+                          "externalSecretClientSecretRoleArn": {
                             "type": "string"
                           }
                         },
-                        "required": ["clientId", "externalSecretKey"]
+                        "required": ["clientId"],
+                        "allOf": [
+                          {
+                            "if": {
+                                "properties": { "externalSecretClientSecretKey": { "type": "null" } }
+                            },
+                            "then": {
+                              "properties": {
+                                "externalSecretClientSecretRef": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": ["externalSecretClientSecretRef"]
+                            }
+                          }
+                        ]
                       }
                     },
                     "required": ["authenticationConfig"]
@@ -512,13 +539,13 @@
                           "clientId": {
                             "$ref": "#/definitions/saneClientID"
                           },
-                          "clientSecret": {
+                          "externalSecretClientSecretRef": {
                             "type": "string"
                           },
-                          "externalSecretKey": {
+                          "externalSecretClientSecretKey": {
                             "type": "string"
                           },
-                          "externalSecretRoleArn": {
+                          "externalSecretClientSecretRoleArn": {
                             "type": "string"
                           },
                           "authPluginMode": {
@@ -528,7 +555,22 @@
                             ]
                           }
                         },
-                        "required": ["clientId", "authPluginMode", "externalSecretKey"]
+                        "required": ["clientId", "authPluginMode"],
+                        "allOf": [
+                          {
+                            "if": {
+                                "properties": { "externalSecretClientSecretKey": { "type": "null" } }
+                            },
+                            "then": {
+                              "properties": {
+                                "externalSecretClientSecretRef": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": ["externalSecretClientSecretRef"]
+                            }
+                          }
+                        ]
                       }
                     },
                     "required": ["authenticationConfig"]
