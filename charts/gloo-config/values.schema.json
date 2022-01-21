@@ -30,14 +30,11 @@
             "redis": {
               "type": "object",
               "properties": {
-                "cacheName": {
-                  "type": "string",
-                  "enum":[
-                    "wadtfy-prod", "wadtfy-int", "wadtfy-dev"
-                  ]
+                "cookieName": {
+                  "$ref": "#/definitions/cookieName"
                 }
               },
-              "required": [ "cacheName" ]
+              "required": [ "cookieName" ]
             },
             "session": {
               "type": "object",
@@ -244,19 +241,19 @@
                     "type": "string"
                 }
               },
-              "allowedHeaders": {
+              "allowHeaders": {
                 "type": "array",
                 "items": {
                   "type": "string"
                 }
               },
-              "allowedOrigins": {
+              "allowDomains": {
                 "type": "array",
                 "items": {
                   "type": "string"
                 }
               },
-              "allowOriginRegex": {
+              "allowSubDomains": {
                 "type": "array",
                 "items": {
                   "type": "string"
@@ -398,11 +395,8 @@
                     "redis": {
                       "type": "object",
                       "properties": {
-                        "cacheName": {
-                          "type": "string",
-                          "enum":[
-                            "wadtfy-prod", "wadtfy-int", "wadtfy-dev"
-                          ]
+                        "cookieName": {
+                          "$ref": "#/definitions/cookieName"
                         }
                       }
                     },
@@ -433,9 +427,15 @@
                           },
                           "clientSecret": {
                             "type": "string"
+                          },
+                          "externalSecretKey": {
+                            "type": "string"
+                          },
+                          "externalSecretRoleArn": {
+                            "type": "string"
                           }
                         },
-                        "required": ["clientId", "clientSecret"]
+                        "required": ["clientId", "externalSecretKey"]
                       }
                     },
                     "required": ["authenticationConfig"]
@@ -456,9 +456,15 @@
                           },
                           "clientSecret": {
                             "type": "string"
+                          },
+                          "externalSecretKey": {
+                            "type": "string"
+                          },
+                          "externalSecretRoleArn": {
+                            "type": "string"
                           }
                         },
-                        "required": ["clientId", "clientSecret"]
+                        "required": ["clientId", "externalSecretKey"]
                       }
                     },
                     "required": ["authenticationConfig"]
@@ -479,9 +485,15 @@
                             "items": {
                               "type": "string"
                             }
+                          },
+                          "authPluginMode": {
+                            "type": "string",
+                            "enum": [
+                              "VerifyAccessToken", "GatherCredentials"
+                            ]
                           }
                         },
-                        "required": ["allowedClientIds"]
+                        "required": ["allowedClientIds", "authPluginMode"]
                       }
                     },
                     "required": ["authenticationConfig"]
@@ -503,6 +515,12 @@
                           "clientSecret": {
                             "type": "string"
                           },
+                          "externalSecretKey": {
+                            "type": "string"
+                          },
+                          "externalSecretRoleArn": {
+                            "type": "string"
+                          },
                           "authPluginMode": {
                             "type": "string",
                             "enum": [
@@ -510,7 +528,7 @@
                             ]
                           }
                         },
-                        "required": ["clientId", "clientSecret", "authPluginMode"]
+                        "required": ["clientId", "authPluginMode", "externalSecretKey"]
                       }
                     },
                     "required": ["authenticationConfig"]
@@ -535,6 +553,7 @@
   ],
   "definitions": {
     "sanePrefix": { "type": "string", "pattern": "^[/][A-z]?" },
-    "saneClientID": { "type": "string", "pattern": "[-a-z0-9]+"}
+    "saneClientID": { "type": "string", "pattern": "[-a-z0-9]+"},
+    "cookieName": { "type": "string", "pattern": "^[A-z-0-9]+wadtfy-(int|dev|prod)[A-z-0-9]*"}
   }
 }

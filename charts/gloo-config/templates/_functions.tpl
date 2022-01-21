@@ -11,7 +11,7 @@ Helper template function to return a specific domain information like tld or sub
   
 ### Return:
 
-Domain Name (string)
+value (string)
 
 ### Example:
 
@@ -71,7 +71,7 @@ Create and return the name of AuthConfig resource based on Service name (svc), h
   
 ### Return:
 
-AuthConfigName (string)
+value (string)
 
 ### Example:
 
@@ -359,4 +359,42 @@ value (string)
 {{- define "getAcrValue" -}}
   {{- $strongauthlevel := index . 0 -}}
   {{- printf "strongAuth%vService" $strongauthlevel -}}
+{{- end -}}
+{{- /* Generate clientSecretRef Name 
+
+### Description: 
+
+Create and return the secretRef for AuthConfig resource based on Service name (svc) and svc.authenticationConfig.secretRef
+
+### Parameters: 
+
+- values (dict)
+- global values (interface)
+  
+### Return:
+
+value (string)
+
+### Example:
+
+{{ $_ := set $dict "svc" "myservice" }}
+{{ $_ := set $dict "authenticationtype" "ui" }}
+{{ $var := (include "getclientSecretRef" (list $dict)) }}
+{{ print $var }}
+-> myservice-oidc-secrets
+
+*/}}
+{{- define "getclientSecretRef" -}}
+  {{- $values := index . 0 -}}
+  {{- if not ($values.authenticationconfig).clientSecret -}}
+    {{- if or (eq "ui" $values.authenticationtype) (eq "ui-with-strongauth" $values.authenticationtype) -}}
+      {{- printf "%v-oidc-secrets" $values.svc -}}
+    {{ else if or (eq "m2m-with-token" $values.authenticationtype) -}}
+      {{- printf "%v-oauth2-client-credentials-secrets" $values.svc -}}
+    {{ else }}
+      {{- printf "%v-client-secret" $values.svc -}}
+    {{- end -}}
+  {{- else -}}
+    {{- printf ($values.authenticationconfig).clientSecret -}}
+  {{- end -}}
 {{- end -}}

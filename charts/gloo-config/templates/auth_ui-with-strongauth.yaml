@@ -32,7 +32,7 @@ spec:
               domain: {{ first $values.servicedomain }}
               maxAge: {{ $values.cookietimeout }}
             redis:
-              cookieName: {{ $values.cachename }}
+              cookieName: {{ $values.cookiename }}
               options:
                 host: {{ $.Values.defaults.redisUrl }}
 

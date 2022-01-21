@@ -11,10 +11,11 @@
     {{- $_ := set $values "authenticationtype" $val.authenticationType -}}
     {{- $_ := set $values "clientid" ($val.authenticationConfig).clientId -}}
     {{- $_ := set $values "callbackpath" (default $.Values.defaults.authenticationConfig.callbackPath ($val.authenticationConfig).callbackPath) -}}
-    {{- $_ := set $values "clientsecret" ($val.authenticationConfig).clientSecret -}}
+    {{- $_ := set $values "authenticationconfig" $val.authenticationConfig -}}
+    {{- $_ := set $values "clientsecret" (include "getclientSecretRef" (list $values)) -}}
     {{- $_ := set $values "headerextension" ($val.authenticationConfig).headerExtension -}}
     {{- $_ := set $values "allowedclientids" ($val.authenticationConfig).allowedClientIds -}}
-    {{- $_ := set $values "cachename" (default $.Values.defaults.authenticationConfig.redis.cacheName ((($val.authenticationConfig).redis).cacheName)) -}}
+    {{- $_ := set $values "cookiename" (default $.Values.defaults.authenticationConfig.redis.cookieName ((($val.authenticationConfig).redis).cookieName)) -}}
     {{- $_ := set $values "cookietimeout" (default $.Values.defaults.authenticationConfig.session.cookieTimeout ((($val.authenticationConfig).session).cookieTimeout )) -}}
     {{- $_ := set $values "authpluginmode" ($val.authenticationConfig).authPluginMode -}}
     {{- $_ := set $values "authconfigname" (include "getAuthConfigName" (list $values $key)) -}}

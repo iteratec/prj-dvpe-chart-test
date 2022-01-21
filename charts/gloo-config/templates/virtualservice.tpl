@@ -86,16 +86,16 @@ spec:
           - {{ . }}
           {{- end }}
         {{ end -}}
-        {{ if $values.cors.allowOrigin -}}
+        {{ if $values.cors.allowDomains -}}
         allowOrigin:
-          {{- range $values.cors.allowOrigins }}
+          {{- range $values.cors.allowDomains }}
           - {{ . | quote }}
           {{- end }}
         {{ end -}}
-        {{ if $values.cors.allowOriginRegex -}}
+        {{ if $values.cors.allowSubDomains -}}
         allowOriginRegex:
-          {{- range $values.cors.allowOriginRegex }}
-          - {{ . | replace "." "[.]" | replace "://" "://([a-zA-Z0-9]+[.-])*[a-zA-Z0-9]+[.]" | quote }}
+          {{- range $values.cors.allowSubDomains }}
+          - {{ . | replace "." "[.]" | replace ".*" "https://([a-zA-Z0-9]+[.-])*[a-zA-Z0-9]+[.]" | quote }}
           {{- end }}
         {{ end -}}
         {{ if $values.cors.exposeHeaders -}}
