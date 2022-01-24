@@ -16,7 +16,7 @@ spec:
   secretName: {{ $values.svc }}-private-tls-by-issuer
   issuerRef:
     name: wadtfy-certificate-issuer
-    group: {{ $values.sslconfig.certificate.issuergroup }}
+    group: {{ $values.sslconfig.certificate.issuerGroup }}
     kind: Issuer
   subject:
     organizations:
